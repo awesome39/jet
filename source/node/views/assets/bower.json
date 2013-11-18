@@ -1,0 +1,7 @@
+{
+  "name": "apiserver-ui",
+  "version": "0.0.1",
+  "dependencies": {
+    "awesome": "https://github.com/freaking-awesome/ui/archive/master.tar.gz"
+  }
+}

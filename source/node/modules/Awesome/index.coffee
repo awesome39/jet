@@ -1,0 +1,197 @@
+{Module}= require 'di'
+
+module.exports= class Awesome extends Module
+
+    constructor: () ->
+        super
+
+
+
+        @factory 'Account', require './models/Account'
+        @factory 'AccountGithub', require './models/Account/Github'
+
+        @factory 'Group', require './models/Group'
+
+        @factory 'Permission', require './models/Permission'
+
+        @factory 'Profile', require './models/Profile'
+        @factory 'ProfileGroup', require './models/ProfileGroup'
+        @factory 'ProfilePermission', require './models/ProfilePermission'
+
+        @factory 'ProfileSession', require './models/ProfileSession'
+
+
+
+        @factory 'Access', require './services/Access'
+
+        @factory 'access', (Access) ->
+            new Access
+
+
+
+        @factory 'Auth', require './services/Auth'
+
+        @factory 'auth', (Auth) ->
+            new Auth
+
+
+
+        @factory 'Session', require './services/Session'
+
+        @factory 'session', (Session) ->
+            new Session
+
+
+
+        #
+        # Класс приложения Awesome API
+        #
+        @factory 'AwesomeApi', require './handlers/Api/V1'
+
+
+
+        #
+        # Экземпляр приложения Awesome API
+        #
+        # @version 1
+        #
+        @factory 'awesome', (AwesomeApi, injector, db, log) ->
+            app= new AwesomeApi
+
+            app.head '/users', (req, res) ->
+                res.setHeader 'x-jetcraft-api', 'Awesone Users API'
+                res.setHeader 'x-jetcraft-api-version', 1
+                do res.end
+
+            app.get '/user'
+
+            ,   db.redis.middleware
+            ,   db.maria.middleware()
+
+            ,   AwesomeApi.loadProfile()
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'profile rejected', err
+                            next err
+
+            app.get '/users'
+
+            ,   db.maria.middleware()
+
+            ,   AwesomeApi.queryProfile()
+            ,   (req, res, next) ->
+                    req.profiles (profiles) ->
+                            log 'profiles resolved', profiles
+                            res.json profiles
+                    ,   (err) ->
+                            log 'profiles rejected', err
+                            next err
+
+            ###
+            Добавляет пользователя.
+            ###
+            app.post '/users'
+
+            ,   db.maria.middleware()
+            ,   db.maria.middleware.transaction()
+
+            ,   AwesomeApi.createProfile()
+            ,   AwesomeApi.createProfileEmails()
+            ,   AwesomeApi.createProfilePhones()
+
+            ,   db.maria.middleware.transaction.commit()
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'created profile resolved', profile
+                            res.json 201, res.profile
+
+            ###
+            Отдает указанного пользователя.
+            ###
+            app.get '/users/:userId(\\d+)'
+
+            ,   db.maria.middleware()
+
+            ,   AwesomeApi.getProfile('userId')
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'selected profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'selected profile rejected', err
+                            next err
+
+            ###
+            Обновляет указанного пользователя.
+            ###
+            app.post '/users/:userId(\\d+)'
+
+            ,   db.maria.middleware()
+            ,   db.maria.middleware.transaction()
+
+            ,   AwesomeApi.updateProfile('userId')
+            ,   AwesomeApi.updateProfileEmails()
+            ,   AwesomeApi.updateProfilePhones()
+
+            ,   db.maria.middleware.transaction.commit()
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'updated profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'updated profile rejected', err
+                            next err
+
+            ###
+            Удаляет указанного пользователя.
+            ###
+            app.delete '/users/:userId(\\d+)'
+
+            ,   db.maria.middleware()
+
+            ,   AwesomeApi.deleteProfile('userId')
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'deleted profile resolved', profile
+                            res.json profile
+
+            ###
+            Включает или выключает указанного пользователя.
+            ###
+            app.post '/users/:userId(\\d+)/enable'
+
+            ,   db.maria.middleware()
+
+            ,   AwesomeApi.enableProfile('userId')
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'enabled profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'enabled profile rejected', err
+                            next err
+
+            app.post '/user/login'
+
+            ,   db.maria.middleware()
+
+            ,   AwesomeApi.authUser()
+            ,   (req, res, next) ->
+                    res.json req.account
+
+
+
+            app.use (err, req, res, next) ->
+                res.json
+                    error: err.name
+                    message: err.message
+                ,   500
+
+
+
+            app

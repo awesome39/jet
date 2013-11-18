@@ -1,0 +1,35 @@
+extends ../layout
+
+
+
+block b-page--main
+
+    .section--main--bar: .row
+        .col-10
+            input.input(placeholder='Поиск', ng-model='playerSearch')
+        .col-2
+            a.btn.btn-primary(ng-click='showDetails(null)')= 'Создать'
+
+    table.table.players
+        thead
+            tr
+                th.t: .t-col #
+                th.t.col-flex: .t-col.table-col: .table-col-sortable Игрок
+                th.t: .t-col Статус
+                th.t: .t-col
+                    button.btn.btn-sm(ng-click='reload()')
+                        i.icon-refresh
+
+
+        tbody
+            tr(ng-repeat='player in players | filter:playerSearch')
+                td.t: .t-col: a(ng-href="#/players/player/{{player.id}}"): u {{player.id}}
+                td.t: .t-col: a(ng-href="#/players/player/{{player.id}}"): u {{player.name}}
+                td.t: .t-col
+                    button(ng-if='!player.enabledAt', ng-click='activate(player)').btn.btn-success
+                        i.icon-unchecked
+                    button(ng-if='player.enabledAt', ng-click='deactivate(player)').btn.btn-success
+                        i.icon-sign-blank
+                td.t: .t-col
+                    button.btn.btn-success(ng-click='showDetails(player)')
+                        i.icon-wrench

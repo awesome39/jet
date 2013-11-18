@@ -1,0 +1,49 @@
+extends ../layout
+
+block view
+    .b-servers--server-dialog(ng-controller="ServersServerFormCtrl")
+        +bDialogHead()
+            i.icon-file
+            span Информация о сервере
+            +bDialogActs()
+                +bDialogActClose()
+        +bDialogBody()
+            .row
+                .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-2.col-lg-5
+                    form(name='ServerForm')
+                        h3(style='text-align:center') Сервер {{dialog.route.params}}
+                        fieldset
+                            input.input(placeholder='Название сервера', type='text', required, ng-maxlength='50', ng-model='server.title')
+                            input.input(placeholder='Name', type='text', required, ng-maxlength='50', ng-model='server.name')
+                            input.input(placeholder='Ключ', type='text', required, ng-maxlength='50', ng-model='server.key')
+
+
+                        fieldset(name='ServerTagForm')
+                            .row
+                                .col-10
+                                    select.input(ng-model='tag')
+                                        option(ng-repeat='tag in tags | filter:filterTag:tag', value='{{tag}}') {{tag.name}} ({{tag.titleRuSingular}})
+                                .col-1
+                                    button.btn(ng-click='addTag(tag)',ng-disabled='!tag')
+                                        i.icon-plus
+
+                            //.row(ng-repeat='serverTag in server.tags')
+                                .col-3 {{serverTag.name}}
+                                .col-1
+                                    button.btn(ng-click='removeTag(serverTag)')
+                                        i.icon-minus
+
+
+                        fieldset(ng-if='action=="create"')
+                            button.btn.btn-primary.btn-block(type='submit', ng-click='create()', ng-disabled='!ServerForm.$valid')
+                                span Создать сервер
+
+                        fieldset(ng-if='action=="update"'): .row
+                            .col-10
+                                button.btn.btn-primary.btn-block(type='submit',ng-click='update()',ng-disabled='!ServerForm.$valid')
+                                    span Обновить сервер
+                            .col-2
+                                button.btn.btn-link.btn-block.text-left(ng-click='delete()')
+                                    span Удалить
+                .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-0.col-lg-3
+                    span right

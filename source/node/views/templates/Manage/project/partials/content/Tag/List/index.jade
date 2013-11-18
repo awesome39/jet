@@ -1,0 +1,34 @@
+extends ../layout
+
+
+
+block b-page--main
+    .section--main--bar: .row
+        .col-10
+            input.input(placeholder='Поиск материалов', ng-model='tagSearch', required)
+            a.input-action(ng-show="!!tagSearch", ng-click="searchClear()"): i.icon-remove
+        .col-2
+            a.btn.btn-primary(ng-click='showDetails(null)')= 'Создать'
+
+    table.table.players
+        thead: tr
+
+            th.t.col-flex
+                .col Тег
+
+            th.t
+                button.btn.btn-info(ng-click='reload()')
+                    i.icon-refresh
+
+        tbody: tr(ng-repeat='tag in tags | filter:tagSearch')
+
+            td.t.col-flex
+                .col
+                    a(title='{{tag.id}}') {{tag.name}}
+                    span 
+                    span(ng-repeat='parent in tag.parentTags') {{parent.name}} 
+
+            td.t
+                a(ng-click='showDetails(tag)')
+                    button.btn.btn-success
+                        i.icon-wrench

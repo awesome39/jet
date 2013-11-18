@@ -1,0 +1,57 @@
+extends ../layout
+
+
+
+block b-page--head
+    a(href='#/store') Управление сервисом
+
+
+
+block b-page--main
+
+    //.section--main--bar: .input-rich
+        input.input(placeholder='Поиск предметов', ng-model='itemSearch', required)
+        a.input-action(ng-show="itemSearch", ng-click="searchClear()"): i.icon-remove
+
+    .section--main--bar: .row
+        .col-10
+            input.input(placeholder='Поиск материалов', ng-model='itemSearch', required)
+            a.input-action(ng-show="!!itemSearch", ng-click="searchClear()"): i.icon-remove
+        .col-2
+            a.btn.btn-primary(ng-click='showDetails(null)')= 'Создать'
+
+    table.table.items
+        thead
+            tr
+
+                th.t.col-flex(colspan=3)
+                    .sortable: .sortable-cell Предмет
+
+                th.t
+                    .col.col-right Цена
+
+                th.t
+                    .col Кол-во
+
+                th.t
+                    button.btn.btn-info(ng-click='reload()')
+                        i.icon-refresh
+        tbody
+            tr(ng-repeat='item in items | filter:itemSearch', ng-click="showDetails(item)")
+
+                td.t.col-flex
+                    a(title="{{item.titleEn}}") {{item.titleRu}}
+                td.t
+                    a.col.col-right(title="{{item.id}}") {{item.material}}
+                td.t
+                    a.col: img.item--image(ng-src='{{item.imageUrl}}')
+
+                td.t
+                    a.col.col-right {{item.price | currency}}
+
+                td.t
+                    a.col {{item.amount}}
+
+                td.t
+                    a.col.btn.btn-default(ng-click="showDetails(item)")
+                        i.icon-wrench

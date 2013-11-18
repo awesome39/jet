@@ -1,0 +1,89 @@
+include ../mixins
+
+!!! html
+html(lang='ru', ng-app='console', ng-cloak, ng-controller='AppCtrl')
+
+    head
+        block head
+            meta(charset='utf-8')
+            title(ng-bind="app.title") JET CONSOLE -- A NodeJS CMF CONSOLE...
+
+            block head-links
+                link(rel='stylesheet', href='/styles/awesome.css')
+                link(rel='stylesheet', href='/styles/awesome-navs.css')
+                link(rel='stylesheet', href='/styles/awesome-tabs.css')
+                link(rel='stylesheet', href='/styles/awesome-forms.css')
+                link(rel='stylesheet', href='/styles/awesome-dialogs.css')
+                link(rel='stylesheet', href='/styles/jet.css')
+
+            block head-scripts
+                script(src='/scripts/libs/jquery/jquery.min.js')
+                script(src='/scripts/libs/angular/angular.min.js')
+                script(src='/scripts/libs/angular/angular-animate.min.js')
+                script(src='/scripts/libs/angular/angular-resource.min.js')
+                script(src='/scripts/libs/angular/angular-route.min.js')
+                script(src='/scripts/awesome.js')
+
+    body(ng-controller='ViewCtrl'): block body
+        .b-app
+            header.b-app--head
+
+                .navbar.navbar-static-top
+                    a.navbar-brand(ng-class="{active:'index'==app.route.name}", ng-href="{{app.prefix}}/")
+                        span jet console
+                        sup {{app.version}}
+                    .nav-collapse
+                        ul.nav.navbar-nav.pull-left
+                            li(ng-class="{active:'system'==app.route.name}"): a(ng-href="{{app.prefix}}/system")
+                                u System
+                            li(ng-class="{active:'status'==app.route.name}"): a(ng-href="{{app.prefix}}/status")
+                                u Status
+                        ul.nav.navbar-nav.pull-right
+                            li(ng-class="{active:'login'==app.dialog.overlay}"): a(ng-href="{{app.prefix}}/login/console")
+                                u Sign In
+
+            main.b-app--body: .row
+                :less
+                    .layout-landing {
+                        margin: 10% 15%;
+                    }
+
+                .b-app--main(ng-view)
+
+                +bDialog('')
+                    +bDialogArea()
+                    +bDialogMain()
+
+                        .b-users-login-dialog(ng-if="'login'==dialog.overlay", ng-controller="LoginAppDialogCtrl")
+                            +bDialogHead()
+                                i.icon-signin
+                                span Вход в центр управления
+                                +bDialogActs()
+                                    +bDialogActClose()
+                            +bDialogTabs()
+                                ul.nav.nav-tabs.pull-left
+                                    li(ng-class="{active:!dialog.tab}"): a(ng-href="{{app.prefix}}/login") Вход в кабинет
+                                    li(ng-class="{active:'console'==dialog.tab}"): a(ng-href="{{app.prefix}}/login/console") Вход в консоль
+                            +bDialogBody()
+                                .row
+                                    .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-2.col-lg-5
+                                        form.form.form-lg(name='loginPasswordForm', ng-submit='login(loginPasswordForm)').dialog-form
+                                            legend Вход с паролем
+                                            input.input(type='text', name='username', placeholder='Пользователь', required, ng-model='user.name')
+                                            input.input(type='password', name='password', placeholder='Пароль', required, ng-model='user.pass')
+                                            .form-acts
+                                                .row
+                                                    .col-xs-12
+                                                        button.btn.btn-primary.btn-block(type='submit', ng-disabled='!loginPasswordForm.$valid')
+                                                            i.icon-signin
+                                                            span Войти в кабинет
+                                    .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-0.col-lg-3
+                                        form.form.form-lg.dialog-form
+                                            legend Вход с помощью
+                                            input(type='hidden', ng-model="lol", required)
+                                            button.btn.btn-link(): u Вход c Google
+                                            button.btn.btn-link(): u Вход c Github
+
+            menu.b-app--notifications(ng-if="app.notify.notifications.length")
+                .b-app--notification(ng-repeat="notification in app.notify.notifications")
+                    p.note(ng-if="'error'==notification.type") {{notification}}

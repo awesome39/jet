@@ -1,0 +1,24 @@
+extends ./layout
+
+
+
+append b-page--head
+    b Управление сервисом
+
+
+
+append b-page--side
+
+    ul.nav.nav-list
+        li: a(ng-href="#/store") Сводка
+        li.nav-list--sep
+
+    ul.nav.nav-list.nav-tags
+        //li.nav-list--header Пожертвования
+        //li: a(ng-href='#/store/payments/~') Пожертвования игроков
+        //li.nav-list--header Привилегии
+        //li: a(ng-href='#/store/subscribes/~') Привилегии игроков
+        //li: a(ng-href='#/store/indulgences/~') Индульгенции
+        li.nav-list--header Продажи
+        li: a(ng-href='#/store/item/~') Предметы
+        //li: a(ng-href='#/store/enchantment/~') Чары

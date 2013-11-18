@@ -1,0 +1,69 @@
+{
+  "name": "apiserver.builder", "private": true,
+  "repository": { "type": "git", "url": "https://github.com/okdas/apiserver.git"},
+
+
+
+  "config": {
+    "build": {
+      "app": {
+        "root": "app",
+        "node": "app/node",
+        "nodeModules": "app/node_modules"
+      },
+      "src": {
+        "root": "source",
+        "node": "source/node",
+        "nodeModules": "source/node_modules"
+      }
+    }
+  },
+
+
+
+  "scripts": {
+    "install": "npm run-script install-bower && npm run-script install-awesome && npm run-script install-app",
+    "install-bower": "cd source/node/views/assets && bower install",
+    "install-awesome": "cd source/node/views/assets/bower_components/awesome && npm install",
+    "install-app": "grunt yaml:nodeManifest && cd app/ && npm install",
+
+    "compile": "grunt compile",
+    "build": "grunt && npm run-script install-app",
+
+    "build-templates": "grunt templates",
+    "build-styles": "grunt styles",
+    "build-scripts": "grunt scripts",
+
+    "start": "node app/",
+    "start-dev-node": "grunt compile-node && npm start",
+
+    "watch": "grunt watch",
+
+    "test": "grunt compile-node && mocha spec/tests/*.coffee --compilers coffee:coffee-script --reporter spec",
+    "test-Awesome": "grunt compile-node && mocha spec/tests/node/modules/Awesome/*.coffee --compilers coffee:coffee-script --reporter spec",
+    "test-Jetcraft": "grunt compile-node && mocha spec/tests/node/modules/Jetcraft/*.coffee --compilers coffee:coffee-script --reporter spec"
+  },
+
+
+
+  "devDependencies": {
+    "bower": "latest",
+    "grunt": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-clean": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-coffee": "latest",
+    "grunt-contrib-jade": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-yaml": "latest",
+    "grunt-cli": "latest",
+    "coffee-script": "latest",
+    "less": "latest",
+
+    "mocha": "latest",
+    "chai": "latest",
+
+    "supertest": "latest"
+  }
+
+}
