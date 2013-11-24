@@ -1,6 +1,6 @@
 {
-  "name": "apiserver.builder", "private": true,
-  "repository": { "type": "git", "url": "https://github.com/okdas/apiserver.git"},
+  "name": "jet.builder", "private": true,
+  "repository": { "type": "git", "url": "https://bitbucket.com/awesome39/jet"},
 
 
 
@@ -40,8 +40,7 @@
     "watch": "grunt watch",
 
     "test": "grunt compile-node && mocha spec/tests/*.coffee --compilers coffee:coffee-script --reporter spec",
-    "test-Awesome": "grunt compile-node && mocha spec/tests/node/modules/Awesome/*.coffee --compilers coffee:coffee-script --reporter spec",
-    "test-Jetcraft": "grunt compile-node && mocha spec/tests/node/modules/Jetcraft/*.coffee --compilers coffee:coffee-script --reporter spec"
+    "test-Awesome": "grunt compile-node && mocha spec/tests/node/modules/Awesome/*.coffee --compilers coffee:coffee-script --reporter spec"
   },
 
 
