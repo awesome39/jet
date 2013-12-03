@@ -45,7 +45,7 @@ config:
             email:
 
                 host: 'smtp.gmail.com'
-                port: '465'
+                port: 465
 
                 secureConnection: true
 
@@ -63,12 +63,6 @@ config:
     development:
 
         installed: false
-
-        db:
-
-            maria:
-                host: jet.awesome39.com
-                port: 3306
 
 
 
