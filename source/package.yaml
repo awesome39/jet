@@ -1,5 +1,5 @@
 name: jet
-version: 0.2.1
+version: 0.3.0
 
 
 
@@ -106,7 +106,7 @@ config:
 
 
 scripts:
-    start: node index.js
+    start: node --harmony index.js
 
 
 
