@@ -35,7 +35,7 @@ module.exports= (grunt) ->
 
 
         coffee:
-            # сборка модулей приложения, я хз почему это отдельно ну ок пока будет
+
             nodeModules:
                 options:
                     bare: true
@@ -47,7 +47,6 @@ module.exports= (grunt) ->
                     dest: '<%= pkg.config.build.app.nodeModules %>'
                 }]
 
-            # сборка всего остального приложения, требуется перезапуск приложения
             node:
                 options:
                     bare: true
@@ -103,7 +102,7 @@ module.exports= (grunt) ->
 
 
         jade:
-            # все основные темплейты
+
             views:
                 options:
                     data:
@@ -120,7 +119,7 @@ module.exports= (grunt) ->
 
 
         less:
-            # стили приложения
+
             views:
                 files: [{
                     expand: true
@@ -134,7 +133,7 @@ module.exports= (grunt) ->
 
 
         copy:
-            # скрипты могут быть тут
+
             scripts:
                 files: [{
                     expand: true
@@ -143,8 +142,7 @@ module.exports= (grunt) ->
                     dest: '<%= pkg.config.build.app.node %>/views/assets/scripts'
                 }]
 
-            # стили приложения
-            styles:
+            styles: # стили приложения
                 files: [{
                     expand: true
                     src: ['**/*.css']
@@ -152,8 +150,7 @@ module.exports= (grunt) ->
                     dest: '<%= pkg.config.build.app.node %>/views/assets/styles'
                 }]
 
-            # копируем стиль осома
-            viewsAwesomeStyles:
+            viewsAwesomeStyles: # осомный стиль
                 files: [{
                     expand: true
                     src: ['**/*.css']
@@ -182,7 +179,6 @@ module.exports= (grunt) ->
                     dest: '<%= pkg.config.build.app.node %>/views/assets/scripts'
                 }]
 
-            # дампы бд
             sql:
                 files: [{
                     expand: true
@@ -193,8 +189,8 @@ module.exports= (grunt) ->
 
 
 
-        # активное обновление
         watch:
+
             templates:
                 options:
                     event: ['added', 'deleted', 'changed']
@@ -239,13 +235,14 @@ module.exports= (grunt) ->
     # сборка скриптов
     grunt.registerTask 'scripts', ['clean:scripts', 'copy:scripts', 'copy:viewsAwesomeScripts', 'coffee:scripts']
 
-    # только собирает приложение
+
+
+    # сборка приложения
+
     grunt.registerTask 'build', ['yaml', 'coffee', 'jade', 'less', 'copy']
     grunt.registerTask 'build-node', ['yaml', 'coffee']
 
-    # собирает приложение когда все пакеты установлены, чистит только код
     grunt.registerTask 'compile', ['clean:node', 'build']
     grunt.registerTask 'compile-node', ['build-node']
 
-    # стандартно собираем начисто!!! приложение
     grunt.registerTask 'default', ['clean:all', 'build']
