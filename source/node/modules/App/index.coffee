@@ -1,16 +1,12 @@
 {Module}= require 'di'
 
 App= require './models/App'
-Config= require '../Config'
-Db= require '../Db'
 
 extend= require 'extend'
 http= require 'http'
 
 module.exports= class AppModule extends Module
 
-    @Config= Config
-    @Db= Db
 
 
     constructor: (env, config= {}) ->
