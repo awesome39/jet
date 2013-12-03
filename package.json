@@ -1,5 +1,5 @@
 {
-  "name": "jet.builder", "private": true,
+  "name": "Jet", "version":"0.2", "license": "GPL",
   "repository": { "type": "git", "url": "https://bitbucket.com/awesome39/jet"},
 
 

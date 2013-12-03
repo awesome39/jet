@@ -1,5 +1,5 @@
 name: jet
-version: 0.0.1
+version: 0.2.1
 
 
 
@@ -10,6 +10,8 @@ config:
 
     console:
         port: 8002
+
+
 
     default:
 
@@ -22,10 +24,10 @@ config:
                 host: 127.0.0.1
                 port: 3306
 
-                database: jetcraft
+                database: jet
 
-                user: jetcraft
-                password: jetcraft
+                user: jet
+                password: jet
 
                 timezone: Z
 
@@ -41,18 +43,22 @@ config:
 
         sender:
             email:
+
                 host: 'smtp.gmail.com'
                 port: '465'
+
                 secureConnection: true
 
-                address: 'admin@google.com'
-                password: 'password123'
-                sign: 'oki'
+                address: 'example@google.com'
+                password: 'password'
+                sign: 'okay'
 
             sms:
                 id: 'id'
                 key: 'key'
                 from: 'from'
+
+
 
     development:
 
@@ -61,21 +67,10 @@ config:
         db:
 
             maria:
+                host: jet.awesome39.com
+                port: 3306
 
-                host: office.kd-eurotrans.com
 
-                debug:
-                    - ComQueryPacket
-
-    production:
-
-        installed: true
-
-        db:
-
-            maria:
-
-                debug: false
 
     testing:
 
@@ -84,11 +79,29 @@ config:
         db:
 
             maria:
+                database: jet_testing
 
-                database: jetcraft_testing
 
-                debug:
-                    - ComQueryPacket
+
+    staging:
+
+        installed: true
+
+        db:
+
+            maria:
+                database: jet_staging
+
+
+
+    production:
+
+        installed: true
+
+        db:
+
+            maria:
+                debug: false
 
 
 
