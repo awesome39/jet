@@ -96,6 +96,51 @@
     line-height: 20px;
 }
 
+.navbar-nav.pull-right > li > .dropdown-menu,
+.navbar-nav > li > .dropdown-menu.pull-right {
+    left: auto;
+    right: 0px;
+}
+.dropdown {
+    margin: 5px 5px 5px;
+    & > a {
+        margin: -5px -5px -5px;
+        &:hover {
+            background: transparent !important;
+            //box-shadow: inset 1px 1px 0 0 #FFF, inset -1px -1px 0 0 #F2F2F2;
+        }
+    }
+    &-menu {
+        display: none;
+        margin-top: -5px;
+        padding: 5px;
+        background: #e2e2e2;
+        border: 0; border-radius: 0;
+        box-shadow: none;
+        //box-shadow: 1px 1px 3px -1px rgba(0, 0, 0, 0.6);
+        //box-shadow: inset 1px 0px 0 0 #FFF, inset 0px 0px 0 1px #F2F2F2, 1px 1px 2px -1px rgba(0, 0, 0, 0.6);
+        & > li {
+            & > a {
+                padding: 5px 10px !important;
+            }
+        }
+    }
+    &:hover {
+        background: #e2e2e2;
+        //box-shadow: inset 1px 1px 0 0 #FFF, inset 1px 0px 0 0 #F2F2F2, 1px 1px 2px -1px rgba(0, 0, 0, 0.6);
+        & > a {
+            &, &:hover {
+                background: transparent !important;
+            }
+            &:before, &:after {
+                display: none !important;
+            }
+        }
+    }
+    &:hover &-menu {
+        display: block;
+    }
+}
 
 
 abbr {
@@ -370,6 +415,7 @@ legend {
             text-decoration: none !important;
         }
         & > a:hover {
+            color: inherit;
             background-color: #f2f2f2;
         }
     }

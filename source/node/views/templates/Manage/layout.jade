@@ -153,8 +153,8 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                         form.form.form-lg.dialog-form
                                             legend Вход с помощью
                                             input(type='hidden', ng-model="lol", required)
-                                            button.btn.btn-link(): u Вход c Google
-                                            button.btn.btn-link(): u Вход c Github
+                                            a.btn.btn-link(href='/auth/github'): u Вход c Github
+                                            a.btn.btn-link(href='/auth/google'): u Вход c Google
 
 
             menu.b-app--notifications(ng-if="app.notify.notifications.length")
