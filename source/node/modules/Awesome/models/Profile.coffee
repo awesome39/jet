@@ -20,12 +20,12 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         @emails= data.emails or JSON.parse (data.emailsJson or null)
         @phones= data.phones or JSON.parse (data.phonesJson or null)
 
-        @enabledAt= data.enabledAt
-        @updatedAt= data.updatedAt
-
         @accounts= data.accounts or JSON.parse (data.accountsJson or null)
         @groups= data.groups or JSON.parse (data.groupsJson or null)
         @permissions= data.permissions or JSON.parse (data.permissionsJson or null)
+
+        @enabledAt= data.enabledAt
+        @updatedAt= data.updatedAt
 
 
 
@@ -40,52 +40,56 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                     Profile.*,
 
-                    CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',ProfileEmail.id,',',
                         '"value":"',ProfileEmail.value,'",',
                         '"verified":',IF((ProfileEmail.verifiedAt IS NOT NULL),1,0),
                     '}') ORDER BY
                         (ProfileEmail.verifiedAt IS NOT NULL) DESC,
                         ProfileEmail.id
-                    ),']') as emailsJson,
+                    ),']'), '[]') as emailsJson,
 
-                    CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',ProfilePhone.id,',',
                         '"value":"',ProfilePhone.value,'",',
                         '"verified":',IF((ProfilePhone.verifiedAt IS NOT NULL),1,0),
                     '}') ORDER BY
                         (ProfilePhone.verifiedAt IS NOT NULL) DESC,
                         ProfilePhone.id
-                    ),']') as phonesJson,
+                    ),']'), '[]') as phonesJson,
 
-                    CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',Account.id,',',
-                        '"type":"',Account.type,'"',
+                        '"type":"',Account.type,'",',
+                        '"name":"',Account.name,'",',
+                        '"updatedAt":"',Permission.updatedAt,'"',
                     '}') ORDER BY
                         (Account.type <=> 'local') DESC,
                         Account.type
-                    ),']') as accountsJson,
+                    ),']'), '[]') as accountsJson,
 
-                    CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',ProfileGroup.groupId,',',
                         '"name":"',ProfileGroupProfile.name,'",',
-                        '"priority":',ProfileGroup.priority,
+                        '"priority":',ProfileGroup.priority,',',
+                        '"updatedAt":"',Permission.updatedAt,'"',
                     '}') ORDER BY
                         ProfileGroup.priority
-                    ),']') as groupsJson,
+                    ),']'), '[]') as groupsJson,
 
-                    CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',Permission.id,',',
                         '"name":"',Permission.name,'",',
                         '"profileId":',ProfilePermission.profileId,',',
                         '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                        '"value":',ProfilePermission.value,
+                        '"value":',ProfilePermission.value,',',
+                        '"updatedAt":"',ProfilePermission.updatedAt,'"',
                     '}') ORDER BY
                         (Profile.id <=> ProfilePermission.profileId) DESC,
                         ProfileGroup.priority,
                         Permission.name,
                         ProfilePermission.value
-                    ),']') as permissionsJson
+                    ),']'), '[]') as permissionsJson
 
                   FROM ??
                     as Profile
@@ -101,22 +105,27 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                   LEFT JOIN ??
                     as Account
                     ON Account.profileId = Profile.id
+                    AND Account.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfileGroup
                     ON ProfileGroup.profileId = Profile.id
+                    AND ProfileGroup.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfileGroupProfile
                     ON ProfileGroupProfile.id = ProfileGroup.groupId
+                    AND ProfileGroupProfile.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfilePermission
                     ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
+                    AND ProfilePermission.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as Permission
                     ON Permission.id = ProfilePermission.permissionId
+                    AND Permission.enabledAt <= NOW()
 
                  WHERE
                     Profile.type = ?
@@ -210,7 +219,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                     IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',Account.id,',',
-                        '"type":"',Account.type,'"',
+                        '"type":"',Account.type,'",',
+                        '"name":"',Account.name,'",',
+                        '"updatedAt":"',Permission.updatedAt,'"',
                     '}') ORDER BY
                         (Account.type <=> 'local') DESC,
                         Account.type
@@ -219,7 +230,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',ProfileGroup.groupId,',',
                         '"name":"',ProfileGroupProfile.name,'",',
-                        '"priority":',ProfileGroup.priority,
+                        '"priority":',ProfileGroup.priority,',',
+                        '"updatedAt":"',Permission.updatedAt,'"',
                     '}') ORDER BY
                         ProfileGroup.priority
                     ),']'), '[]') as groupsJson,
@@ -229,7 +241,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"name":"',Permission.name,'",',
                         '"profileId":',ProfilePermission.profileId,',',
                         '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                        '"value":',ProfilePermission.value,
+                        '"value":',ProfilePermission.value,',',
+                        '"updatedAt":"',ProfilePermission.updatedAt,'"',
                     '}') ORDER BY
                         (Profile.id <=> ProfilePermission.profileId) DESC,
                         ProfileGroup.priority,
@@ -251,25 +264,32 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                   LEFT JOIN ??
                     as Account
                     ON Account.profileId = Profile.id
+                    AND Account.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfileGroup
                     ON ProfileGroup.profileId = Profile.id
+                    AND ProfileGroup.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfileGroupProfile
                     ON ProfileGroupProfile.id = ProfileGroup.groupId
+                    AND ProfileGroupProfile.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfilePermission
                     ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
+                    AND ProfilePermission.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as Permission
                     ON Permission.id = ProfilePermission.permissionId
+                    AND Permission.enabledAt <= NOW()
 
                  WHERE
                     Profile.id= ?
+                    AND
+                    Profile.enabledAt <= NOW()
                 """
             ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
             ,   (err, rows) =>
@@ -323,7 +343,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                     IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',Account.id,',',
-                        '"type":"',Account.type,'"',
+                        '"type":"',Account.type,'",',
+                        '"name":"',Account.name,'",',
+                        '"updatedAt":"',Permission.updatedAt,'"',
                     '}') ORDER BY
                         (Account.type <=> 'local') DESC,
                         Account.type
@@ -332,7 +354,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                         '"id":',ProfileGroup.groupId,',',
                         '"name":"',ProfileGroupProfile.name,'",',
-                        '"priority":',ProfileGroup.priority,
+                        '"priority":',ProfileGroup.priority,',',
+                        '"updatedAt":"',Permission.updatedAt,'"',
                     '}') ORDER BY
                         ProfileGroup.priority
                     ),']'), '[]') as groupsJson,
@@ -342,7 +365,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"name":"',Permission.name,'",',
                         '"profileId":',ProfilePermission.profileId,',',
                         '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                        '"value":',ProfilePermission.value,
+                        '"value":',ProfilePermission.value,',',
+                        '"updatedAt":"',ProfilePermission.updatedAt,'"',
                     '}') ORDER BY
                         (Profile.id <=> ProfilePermission.profileId) DESC,
                         ProfileGroup.priority,
@@ -364,22 +388,27 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                   LEFT JOIN ??
                     as Account
                     ON Account.profileId = Profile.id
+                    AND Account.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfileGroup
                     ON ProfileGroup.profileId = Profile.id
+                    AND ProfileGroup.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfileGroupProfile
                     ON ProfileGroupProfile.id = ProfileGroup.groupId
+                    AND ProfileGroupProfile.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as ProfilePermission
                     ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
+                    AND ProfilePermission.enabledAt <= NOW()
 
                   LEFT JOIN ??
                     as Permission
                     ON Permission.id = ProfilePermission.permissionId
+                    AND Permission.enabledAt <= NOW()
 
                  WHERE
                     Profile.name= ?
@@ -434,7 +463,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                         IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                             '"id":',Account.id,',',
-                            '"type":"',Account.type,'"',
+                            '"type":"',Account.type,'",',
+                            '"name":"',Account.name,'",',
+                            '"updatedAt":"',Permission.updatedAt,'"',
                         '}') ORDER BY
                             (Account.type <=> 'local') DESC,
                             Account.type
@@ -443,7 +474,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                             '"id":',ProfileGroup.groupId,',',
                             '"name":"',ProfileGroupProfile.name,'",',
-                            '"priority":',ProfileGroup.priority,
+                            '"priority":',ProfileGroup.priority,',',
+                            '"updatedAt":"',Permission.updatedAt,'"',
                         '}') ORDER BY
                             ProfileGroup.priority
                         ),']'), '[]') as groupsJson,
@@ -453,7 +485,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             '"name":"',Permission.name,'",',
                             '"profileId":',ProfilePermission.profileId,',',
                             '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                            '"value":',ProfilePermission.value,
+                            '"value":',ProfilePermission.value,',',
+                            '"updatedAt":"',ProfilePermission.updatedAt,'"',
                         '}') ORDER BY
                             (Profile.id <=> ProfilePermission.profileId) DESC,
                             ProfileGroup.priority,
@@ -692,7 +725,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                         IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                             '"id":',Account.id,',',
-                            '"type":"',Account.type,'"',
+                            '"type":"',Account.type,'",',
+                            '"name":"',Account.name,'",',
+                            '"updatedAt":"',Permission.updatedAt,'"',
                         '}') ORDER BY
                             (Account.type <=> 'local') DESC,
                             Account.type
@@ -701,7 +736,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
                             '"id":',ProfileGroup.groupId,',',
                             '"name":"',ProfileGroupProfile.name,'",',
-                            '"priority":',ProfileGroup.priority,
+                            '"priority":',ProfileGroup.priority,',',
+                            '"updatedAt":"',Permission.updatedAt,'"',
                         '}') ORDER BY
                             ProfileGroup.priority
                         ),']'), '[]') as groupsJson,
@@ -711,7 +747,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             '"name":"',Permission.name,'",',
                             '"profileId":',ProfilePermission.profileId,',',
                             '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                            '"value":',ProfilePermission.value,
+                            '"value":',ProfilePermission.value,',',
+                            '"updatedAt":"',ProfilePermission.updatedAt,'"',
                         '}') ORDER BY
                             (Profile.id <=> ProfilePermission.profileId) DESC,
                             ProfileGroup.priority,

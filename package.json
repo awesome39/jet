@@ -1,5 +1,5 @@
 {
-  "name": "Jet", "version":"0.2.1", "license": "GPL",
+  "name": "Jet", "version":"0.3.0", "license": "GPL",
   "repository": { "type": "git", "url": "https://bitbucket.com/awesome39/jet"},
 
 
@@ -34,13 +34,13 @@
     "build-styles": "grunt styles",
     "build-scripts": "grunt scripts",
 
-    "start": "node app/",
+    "start": "cd app && npm start",
     "start-dev-node": "grunt compile-node && npm start",
 
     "watch": "grunt watch",
 
-    "test": "grunt compile-node && mocha spec/tests/*.coffee --compilers coffee:coffee-script --reporter spec",
-    "test-Awesome": "grunt compile-node && mocha spec/tests/node/modules/Awesome/*.coffee --compilers coffee:coffee-script --reporter spec"
+    "test": "grunt compile-node && mocha --harmony spec/tests/*.coffee --compilers coffee:coffee-script --reporter spec",
+    "test-Awesome": "grunt compile-node && mocha --harmony spec/tests/node/modules/Awesome/*.coffee --compilers coffee:coffee-script --reporter spec"
   },
 
 
