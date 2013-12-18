@@ -68,8 +68,12 @@ block app-head
                 li: a(href='/project/')
                     u Управление проектом
 
-                li: a(href="/user")
-                    u {{user.name}}
+                li.dropdown
+                    a
+                        strong {{user.name}}
+                        i.caret
+                    menu.nav.nav-list.dropdown-menu
+                        li: a() Выход
 
             ul.nav.navbar-nav.pull-right(ng-if="!user")
 
