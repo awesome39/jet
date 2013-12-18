@@ -18,7 +18,7 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, au
                         req.time.end= (hrtime[0] * 1e9 + hrtime[1])
                         log 'resoled from redis', profile.id, (req.time.end - req.time.start) / 1e6 , 'ms'
 
-                        profile= null
+                        profile= null # КЕШ ВЫКЛЮЧЕН
 
                         if not profile
                             req.profile= Profile.getById profileId, req.maria

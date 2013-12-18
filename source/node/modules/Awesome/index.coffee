@@ -119,7 +119,7 @@ module.exports= class Awesome extends Module
 
             ,   AwesomeApi.loadProfile()
 
-            ,   access('user')
+            ,   access('user.select')
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'profile resolved', profile
