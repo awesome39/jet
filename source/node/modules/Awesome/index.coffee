@@ -104,7 +104,7 @@ module.exports= class Awesome extends Module
         #
         # @version 1
         #
-        @factory 'awesome', (AwesomeApi, db, log) ->
+        @factory 'awesome', (AwesomeApi, access, db, log) ->
             app= new AwesomeApi
 
             app.head '/users', (req, res) ->
@@ -118,6 +118,8 @@ module.exports= class Awesome extends Module
             ,   db.maria.middleware()
 
             ,   AwesomeApi.loadProfile()
+
+            ,   access('user')
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'profile resolved', profile
