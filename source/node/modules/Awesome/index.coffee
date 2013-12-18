@@ -107,19 +107,22 @@ module.exports= class Awesome extends Module
         @factory 'awesome', (AwesomeApi, access, db, log) ->
             app= new AwesomeApi
 
+            app.use db.redis.middleware
+            app.use db.maria.middleware()
+
+            app.use AwesomeApi.loadProfile()
+
             app.head '/users', (req, res) ->
                 res.setHeader 'x-jetcraft-api', 'Awesone Users API'
                 res.setHeader 'x-jetcraft-api-version', 1
                 do res.end
 
+            ###
+            Отдает аутентифицированного пользователя.
+            ###
             app.get '/user'
-
-            ,   db.redis.middleware
-            ,   db.maria.middleware()
-
-            ,   AwesomeApi.loadProfile()
-
             ,   access('user.select')
+
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'profile resolved', profile
@@ -128,9 +131,11 @@ module.exports= class Awesome extends Module
                             log 'profile rejected', err
                             next err
 
+            ###
+            Отдает список пользователей.
+            ###
             app.get '/users'
-
-            ,   db.maria.middleware()
+            ,   access('users.select')
 
             ,   AwesomeApi.queryProfile()
             ,   (req, res, next) ->
@@ -145,8 +150,8 @@ module.exports= class Awesome extends Module
             Добавляет пользователя.
             ###
             app.post '/users'
+            ,   access('users.insert')
 
-            ,   db.maria.middleware()
             ,   db.maria.middleware.transaction()
 
             ,   AwesomeApi.createProfile()
@@ -164,8 +169,7 @@ module.exports= class Awesome extends Module
             Отдает указанного пользователя.
             ###
             app.get '/users/:userId(\\d+)'
-
-            ,   db.maria.middleware()
+            ,   access('users.select')
 
             ,   AwesomeApi.getProfile('userId')
             ,   (req, res, next) ->
@@ -180,8 +184,8 @@ module.exports= class Awesome extends Module
             Обновляет указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)'
+            ,   access('users.update')
 
-            ,   db.maria.middleware()
             ,   db.maria.middleware.transaction()
 
             ,   AwesomeApi.updateProfile('userId')
@@ -202,8 +206,7 @@ module.exports= class Awesome extends Module
             Удаляет указанного пользователя.
             ###
             app.delete '/users/:userId(\\d+)'
-
-            ,   db.maria.middleware()
+            ,   access('users.delete')
 
             ,   AwesomeApi.deleteProfile('userId')
             ,   (req, res, next) ->
@@ -215,8 +218,7 @@ module.exports= class Awesome extends Module
             Включает или выключает указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)/enable'
-
-            ,   db.maria.middleware()
+            ,   access('users.enable')
 
             ,   AwesomeApi.enableProfile('userId')
             ,   (req, res, next) ->
@@ -228,9 +230,6 @@ module.exports= class Awesome extends Module
                             next err
 
             app.post '/user/login'
-
-            ,   db.maria.middleware()
-
             ,   AwesomeApi.authUser()
             ,   (req, res, next) ->
                     res.json req.account
