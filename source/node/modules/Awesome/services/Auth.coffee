@@ -1,6 +1,6 @@
 {Passport}= require 'passport'
 
-module.exports= (Account, cfg, log) -> class AuthService extends Passport
+module.exports= (Account, AccountGithub, cfg, log) -> class AuthService extends Passport
 
 
 
@@ -21,14 +21,14 @@ module.exports= (Account, cfg, log) -> class AuthService extends Passport
                 name: name
                 pass: Account.sha1 pass
 
-        #passportGithub= require 'passport-github'
-        #@use new passportGithub.Strategy
-        #    clientID: cfg.auth.github.clientID
-        #    clientSecret: cfg.auth.github.clientSecret
-        #,   (accessToken, refreshToken, github, done) ->
-        #        done null, new AccountGithub
-        #            providerId: github.id
-        #            providerName: github.username
+        passportGithub= require 'passport-github'
+        @use new passportGithub.Strategy
+            clientID: cfg.auth.github.clientID
+            clientSecret: cfg.auth.github.clientSecret
+        ,   (accessToken, refreshToken, github, done) ->
+                done null, new AccountGithub
+                    providerId: github.id
+                    providerName: github.username
 
 
 

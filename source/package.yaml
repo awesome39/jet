@@ -1,5 +1,5 @@
 name: jet
-version: 0.2.1
+version: 0.2.3
 
 
 
@@ -16,6 +16,12 @@ config:
     default:
 
         port: 8001
+
+        auth:
+
+            github:
+                clientID: cc9377048ebeabf941cf
+                clientSecret: 4b917b48ab0e2265802edb2b733c892833ad0a74
 
         db:
 
@@ -63,12 +69,6 @@ config:
     development:
 
         installed: false
-
-        db:
-
-            maria:
-                host: jet.awesome39.com
-                port: 3306
 
 
 

@@ -1,7 +1,7 @@
 deferred= require 'deferred'
 
 module.exports= (Account, log) -> class AccountGithub extends Account
-    @table: 'user_account_github'
+    @table: 'profile_account_github'
 
 
 
@@ -14,60 +14,29 @@ module.exports= (Account, log) -> class AccountGithub extends Account
 
 
 
-    @auth: (account, db, done) ->
+    @auth: (account, db) ->
         dfd= do deferred
 
-        err= null
-        if not account
-            dfd.reject err= Error 'account is not be null'
+        process.nextTick =>
 
-        if done and err
-            return process.nextTick ->
-                done err, account
+            db.query """
 
-        db.query "
-            SELECT
-                Account.*
-              FROM
-                ?? as Account
-             WHERE
-                Account.providerId= ?
-            "
-        ,   [@table, account.providerId]
-        ,   (err, rows) =>
-                account= null
+                    SELECT
 
-                if not err
-                    if rows.length
-                        account= new @ rows.shift()
-                    dfd.resolve account
-                else
-                    dfd.reject err
+                        *
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, account
+                      FROM
+                        ?? as AccountGithub
 
-        dfd.promise
+                     WHERE
+                        AccountGithub.providerId= ?
 
-
-
-    @get: (id, db, done) ->
-        account= null
-
-        log 'найти аккаунт гитхабера', id
-
-        dfd= do deferred
-
-        setTimeout =>
-
-            account= accounts[id]
-
-            dfd.resolve account
-            if done instanceof Function
-                process.nextTick ->
-                    done null, accounts
-
-        ,   1023
+                """
+            ,   [@table, account.providerId]
+            ,   (err, res) =>
+                    if not err
+                        dfd.resolve res[0] or null
+                    else
+                        dfd.reject err
 
         dfd.promise

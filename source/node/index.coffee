@@ -57,7 +57,7 @@ module.exports= (env, manifest, log) ->
 
         app.get '/', (req, res, next) ->
             if do req.isAuthenticated
-                res.redirect '/project/'
+                res.redirect '/engine/'
             else
                 res.redirect '/welcome/'
 
@@ -88,12 +88,18 @@ module.exports= (env, manifest, log) ->
 
 
         #
+        # Обработчик Authentication API
+        #
+        app.use '/', injector.invoke (authentication) ->
+            authentication
+
+
+
+        #
         # Обработчик Awesome API
         #
         app.use '/api/v1', injector.invoke (awesome) ->
             awesome
-
-
 
 
 
