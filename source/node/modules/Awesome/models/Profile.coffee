@@ -62,7 +62,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"id":',Account.id,',',
                         '"type":"',Account.type,'",',
                         '"name":"',Account.name,'",',
-                        '"updatedAt":"',Permission.updatedAt,'"',
+                        '"updatedAt":"',Account.updatedAt,'"',
                     '}') ORDER BY
                         (Account.type <=> 'local') DESC,
                         Account.type
@@ -72,7 +72,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"id":',ProfileGroup.groupId,',',
                         '"name":"',ProfileGroupProfile.name,'",',
                         '"priority":',ProfileGroup.priority,',',
-                        '"updatedAt":"',Permission.updatedAt,'"',
+                        '"updatedAt":"',ProfileGroup.updatedAt,'"',
                     '}') ORDER BY
                         ProfileGroup.priority
                     ),']'), '[]') as groupsJson,
@@ -221,7 +221,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"id":',Account.id,',',
                         '"type":"',Account.type,'",',
                         '"name":"',Account.name,'",',
-                        '"updatedAt":"',Permission.updatedAt,'"',
+                        '"updatedAt":"',Account.updatedAt,'"',
                     '}') ORDER BY
                         (Account.type <=> 'local') DESC,
                         Account.type
@@ -231,7 +231,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"id":',ProfileGroup.groupId,',',
                         '"name":"',ProfileGroupProfile.name,'",',
                         '"priority":',ProfileGroup.priority,',',
-                        '"updatedAt":"',Permission.updatedAt,'"',
+                        '"updatedAt":"',ProfileGroup.updatedAt,'"',
                     '}') ORDER BY
                         ProfileGroup.priority
                     ),']'), '[]') as groupsJson,
@@ -345,7 +345,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"id":',Account.id,',',
                         '"type":"',Account.type,'",',
                         '"name":"',Account.name,'",',
-                        '"updatedAt":"',Permission.updatedAt,'"',
+                        '"updatedAt":"',Account.updatedAt,'"',
                     '}') ORDER BY
                         (Account.type <=> 'local') DESC,
                         Account.type
@@ -355,7 +355,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         '"id":',ProfileGroup.groupId,',',
                         '"name":"',ProfileGroupProfile.name,'",',
                         '"priority":',ProfileGroup.priority,',',
-                        '"updatedAt":"',Permission.updatedAt,'"',
+                        '"updatedAt":"',ProfileGroup.updatedAt,'"',
                     '}') ORDER BY
                         ProfileGroup.priority
                     ),']'), '[]') as groupsJson,
@@ -465,7 +465,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             '"id":',Account.id,',',
                             '"type":"',Account.type,'",',
                             '"name":"',Account.name,'",',
-                            '"updatedAt":"',Permission.updatedAt,'"',
+                            '"updatedAt":"',Account.updatedAt,'"',
                         '}') ORDER BY
                             (Account.type <=> 'local') DESC,
                             Account.type
@@ -475,7 +475,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             '"id":',ProfileGroup.groupId,',',
                             '"name":"',ProfileGroupProfile.name,'",',
                             '"priority":',ProfileGroup.priority,',',
-                            '"updatedAt":"',Permission.updatedAt,'"',
+                            '"updatedAt":"',ProfileGroup.updatedAt,'"',
                         '}') ORDER BY
                             ProfileGroup.priority
                         ),']'), '[]') as groupsJson,
@@ -727,7 +727,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             '"id":',Account.id,',',
                             '"type":"',Account.type,'",',
                             '"name":"',Account.name,'",',
-                            '"updatedAt":"',Permission.updatedAt,'"',
+                            '"updatedAt":"',Account.updatedAt,'"',
                         '}') ORDER BY
                             (Account.type <=> 'local') DESC,
                             Account.type
@@ -737,7 +737,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             '"id":',ProfileGroup.groupId,',',
                             '"name":"',ProfileGroupProfile.name,'",',
                             '"priority":',ProfileGroup.priority,',',
-                            '"updatedAt":"',Permission.updatedAt,'"',
+                            '"updatedAt":"',ProfileGroup.updatedAt,'"',
                         '}') ORDER BY
                             ProfileGroup.priority
                         ),']'), '[]') as groupsJson,
