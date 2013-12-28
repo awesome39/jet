@@ -1,5 +1,5 @@
 name: jet
-version: 0.3.1
+version: 0.3.3
 
 
 
@@ -113,22 +113,22 @@ scripts:
 dependencies:
 
     di: 0.0.1
-    deferred: 0.6.6
+    deferred: 0.6.8
 
     passport: 0.1.17
     passport-local: 0.1.6
 
-    express: 3.4.3
+    express: 3.4.7
 
-    extend: 1.1.3
+    extend: 1.2.1
 
-    connect-redis: 1.4.5
-    redis: 0.8.4
-    mysql: 2.0.0-alpha9
+    connect-redis: 1.4.6
+    redis: 0.10.0
+    mysql: 2.0.0-rc2
 
     log: 1.4.0
-    request: 2.27.0
-    nodemailer: 0.5.2
+    request: 2.30.0
+    nodemailer: 0.5.15
 
 
 
