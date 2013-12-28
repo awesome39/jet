@@ -22,8 +22,7 @@
 
 
   "scripts": {
-    "install": "npm run-script install-bower && npm run-script install-awesome && npm run-script install-app",
-    "install-bower": "cd source/node/views/assets && bower install",
+    "install-bower": "cd source/node/views/assets && node ../../../../node_modules/bower/bin/bower install",
     "install-awesome": "cd source/node/views/assets/bower_components/awesome && npm install",
     "install-app": "grunt yaml:nodeManifest && cd app/ && npm install",
 
