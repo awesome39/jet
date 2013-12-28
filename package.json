@@ -22,7 +22,7 @@
 
 
   "scripts": {
-    "install-bower": "cd source/node/views/assets && node ../../../../node_modules/bower/bin/bower install",
+    "install-bower": "cd source/node/views/assets && node ../../../../node_modules/bower/bin/bower --allow-root install",
     "install-awesome": "cd source/node/views/assets/bower_components/awesome && npm install",
     "install-app": "grunt yaml:nodeManifest && cd app/ && npm install",
 
