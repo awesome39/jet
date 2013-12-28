@@ -7,11 +7,14 @@ CREATE TABLE `permission` (
   UNIQUE KEY `u_permission` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
 
-INSERT INTO `jet`.`permission` (`id`, `name`, `enabledAt`) VALUES
+INSERT INTO `permission` (`id`, `name`, `enabledAt`) VALUES
 
-('1', 'insert', NOW()),
-('2', 'select', NOW()),
-('3', 'update', NOW()),
-('4', 'delete', NOW())
+('12', 'profile.select', NOW()),
+('13', 'profile.update', NOW()),
+
+('21', 'profiles.insert', NOW()),
+('22', 'profiles.select', NOW()),
+('23', 'profiles.update', NOW()),
+('24', 'profiles.delete', NOW())
 
 ;

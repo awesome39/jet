@@ -9,7 +9,7 @@ CREATE TABLE `profile` (
   UNIQUE KEY `u_profile` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
 
-INSERT INTO `jet`.`profile` (`id`, `name`, `type`, `title`, `enabledAt`) VALUES
+INSERT INTO `profile` (`id`, `name`, `type`, `title`, `enabledAt`) VALUES
 
 ('1', 'root', 'user', 'Главрут', NOW()),
 ('2', 'admins', 'group', 'Администраторы', NOW()),

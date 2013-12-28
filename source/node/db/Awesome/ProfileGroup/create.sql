@@ -12,7 +12,7 @@ CREATE TABLE `profile_group` (
   CONSTRAINT `f_profile_group_profileId` FOREIGN KEY (`profileId`) REFERENCES `profile` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2701 DEFAULT CHARSET=utf8;
 
-INSERT INTO `jet`.`profile_group` (`id`, `profileId`, `groupId`, `enabledAt`) VALUES
+INSERT INTO `profile_group` (`id`, `profileId`, `groupId`, `enabledAt`) VALUES
 
 ('1', '1', '2', NOW()),
 ('2', '3', '4', NOW())

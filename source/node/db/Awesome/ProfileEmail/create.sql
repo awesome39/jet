@@ -11,7 +11,7 @@ CREATE TABLE `profile_email` (
   CONSTRAINT `f_profile_email_profileId` FOREIGN KEY (`profileId`) REFERENCES `profile` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2701 DEFAULT CHARSET=utf8;
 
-INSERT INTO `jet`.`profile_email` (`id`, `profileId`, `value`, `verifiedAt`, `enabledAt`) VALUES
+INSERT INTO `profile_email` (`id`, `profileId`, `value`, `verifiedAt`, `enabledAt`) VALUES
 
 ('1', '1', 'root@awesome39.com', NOW(), NOW()),
 ('2', '2', 'admins@awesome39.com', NOW(), NOW())

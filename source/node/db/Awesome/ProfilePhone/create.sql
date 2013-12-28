@@ -11,7 +11,7 @@ CREATE TABLE `profile_phone` (
   CONSTRAINT `f_profile_phone_profileId` FOREIGN KEY (`profileId`) REFERENCES `profile` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2701 DEFAULT CHARSET=utf8;
 
-INSERT INTO `jet`.`profile_phone` (`id`, `profileId`, `value`, `verifiedAt`, `enabledAt`) VALUES
+INSERT INTO `profile_phone` (`id`, `profileId`, `value`, `verifiedAt`, `enabledAt`) VALUES
 
 ('1', '1', '+7 123 456-78-90', NOW(), NOW()),
 ('2', '1', '+7 123 456-78-91', NOW(), NOW())

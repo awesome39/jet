@@ -121,7 +121,7 @@ module.exports= class Awesome extends Module
             Отдает аутентифицированного пользователя.
             ###
             app.get '/user'
-            ,   access('user.select')
+            ,   access('profile.select')
 
             ,   (req, res, next) ->
                     req.profile (profile) ->
@@ -135,7 +135,7 @@ module.exports= class Awesome extends Module
             Отдает список пользователей.
             ###
             app.get '/users'
-            ,   access('users.select')
+            ,   access('profiles.select')
 
             ,   AwesomeApi.queryProfile()
             ,   (req, res, next) ->
@@ -150,7 +150,7 @@ module.exports= class Awesome extends Module
             Добавляет пользователя.
             ###
             app.post '/users'
-            ,   access('users.insert')
+            ,   access('profiles.insert')
 
             ,   db.maria.middleware.transaction()
 
@@ -169,7 +169,7 @@ module.exports= class Awesome extends Module
             Отдает указанного пользователя.
             ###
             app.get '/users/:userId(\\d+)'
-            ,   access('users.select')
+            ,   access('profiles.select')
 
             ,   AwesomeApi.getProfile('userId')
             ,   (req, res, next) ->
@@ -184,7 +184,7 @@ module.exports= class Awesome extends Module
             Обновляет указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)'
-            ,   access('users.update')
+            ,   access('profiles.update')
 
             ,   db.maria.middleware.transaction()
 
@@ -206,7 +206,7 @@ module.exports= class Awesome extends Module
             Удаляет указанного пользователя.
             ###
             app.delete '/users/:userId(\\d+)'
-            ,   access('users.delete')
+            ,   access('profiles.delete')
 
             ,   AwesomeApi.deleteProfile('userId')
             ,   (req, res, next) ->
@@ -218,7 +218,7 @@ module.exports= class Awesome extends Module
             Включает или выключает указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)/enable'
-            ,   access('users.enable')
+            ,   access('profiles.enable')
 
             ,   AwesomeApi.enableProfile('userId')
             ,   (req, res, next) ->

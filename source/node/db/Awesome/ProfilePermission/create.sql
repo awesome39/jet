@@ -13,11 +13,15 @@ CREATE TABLE `profile_permission` (
   CONSTRAINT `f_profile_permission_profileId` FOREIGN KEY (`profileId`) REFERENCES `profile` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2701 DEFAULT CHARSET=utf8;
 
-INSERT INTO `jet`.`profile_permission` (`id`, `profileId`, `permissionId`, `value`, `enabledAt`) VALUES
+INSERT INTO `profile_permission` (`id`, `profileId`, `permissionId`, `value`, `enabledAt`) VALUES
 
-('1', '1', '2', '1', NOW()),
-('2', '2', '2', '0', NOW()),
-('3', '3', '2', '1', NOW()),
-('4', '4', '2', '0', NOW())
+('12', '1', '12', '1', NOW()),
+('13', '1', '13', '1', NOW()),
+('14', '1', '21', '1', NOW()),
+('15', '1', '22', '1', NOW()),
+('16', '1', '23', '1', NOW()),
+('17', '1', '24', '1', NOW()),
+
+('22', '3', '12', '1', NOW())
 
 ;
