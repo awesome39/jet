@@ -68,38 +68,38 @@ module.exports= (log) -> class ProfileSession
     @insertMaria: (profileId, sessionId, ip, headers, maria, done) ->
         dfd= do deferred
 
-        err= null
-        if not profileId
-            err= Error 'profileId cannot be null'
-        if not sessionId
-            err= Error 'sessionId cannot be null'
+        process.nextTick =>
+            try
 
-        if err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
-            return dfd.reject err
+                err= null
 
-        maria.query """
-            INSERT
-              INTO ??
+                if not profileId
+                    err= Error 'profileId cannot be null'
 
-               SET
-                profileId= ?,
-                sessionId= ?,
-                ip= ?,
-                headers= ?
-            """
-        ,   [@table, profileId, sessionId, ip, headers]
-        ,   (err, res) =>
-                log 'INSERTED SESS', err, res
-                if not err
-                    dfd.resolve sessionId
-                else
-                    dfd.reject err
+                if not sessionId
+                    err= Error 'sessionId cannot be null'
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, sessionId
+                if err then throw err
+
+                maria.query """
+                    INSERT
+                      INTO ??
+
+                       SET
+                        profileId= ?,
+                        sessionId= ?,
+                        ip= ?,
+                        headers= ?
+                    """
+                ,   [@table, profileId, sessionId, ip, headers]
+                ,   (err, res) =>
+                        log 'INSERTED SESS', err, res
+                        if not err
+                            dfd.resolve sessionId
+                        else
+                            dfd.reject err
+
+            catch err
+                dfd.reject err
 
         dfd.promise
