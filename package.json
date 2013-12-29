@@ -22,6 +22,8 @@
 
 
   "scripts": {
+    "rock": "npm install bower",
+
     "install-bower-clean": "cd source/node/views/assets && bower --allow-root cache clean",
     "install-bower": "cd source/node/views/assets && bower --allow-root --force install",
     "install-awesome": "cd source/node/views/assets/bower_components/awesome && npm install",
