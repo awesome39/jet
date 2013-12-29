@@ -25,51 +25,52 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                 script(src='/scripts/libs/angular/angular-route.min.js')
                 script(src='/scripts/awesome.js')
 
-                :coffeescript
+                script
+                    :coffee
 
 
 
-                    app= angular.module 'app', []
+                        app= angular.module 'app', []
 
-                    app.constant 'debug', console
+                        app.constant 'debug', console
 
 
 
-                    app.factory 'User', ($resource) ->
-                        $resource '/api/v1/user/:action', {},
-                            login:
-                                method: 'post'
-                                params:
-                                    action: 'login'
+                        app.factory 'User', ($resource) ->
+                            $resource '/api/v1/user/:action', {},
+                                login:
+                                    method: 'post'
+                                    params:
+                                        action: 'login'
 
-                            logout:
-                                method: 'post'
-                                params:
-                                    action: 'logout'
+                                logout:
+                                    method: 'post'
+                                    params:
+                                        action: 'logout'
 
-                    app.controller 'AppHeadCtrl', ($rootScope, $scope, User) ->
-                        console.log 'AppHeadCtrl'
-                        $rootScope.user= User.get (user) ->
-                                console.log 'удалось получить пользователя', user
-                        ,   (err) ->
-                                console.log 'не удалось получить пользователя', err
+                        app.controller 'AppHeadCtrl', ($rootScope, $scope, User) ->
+                            console.log 'AppHeadCtrl'
+                            $rootScope.user= User.get (user) ->
+                                    console.log 'удалось получить пользователя', user
+                            ,   (err) ->
+                                    console.log 'не удалось получить пользователя', err
 
-                    app.controller 'LoginAppDialogCtrl', ($rootScope, $scope, User, $window) ->
-                        console.log 'LoginAppDialogCtrl'
+                        app.controller 'LoginAppDialogCtrl', ($rootScope, $scope, User, $window) ->
+                            console.log 'LoginAppDialogCtrl'
 
-                        if not $rootScope.user
-                            $rootScope.user= new User
+                            if not $rootScope.user
+                                $rootScope.user= new User
 
-                        console.log 'User', $scope.user
-                        $scope.login= (loginForm) ->
-                            console.log 'login', arguments
-                            $scope.user.$login (user) ->
-                                #user.pass= loginForm.password.$modelValue
-                                $window.location.href= '../project/'
-                                $scope.notify 'done', 'authentication'
-                            , (err) ->
-                                $scope.user.pass= ''
-                                $scope.notify 'error', err
+                            console.log 'User', $scope.user
+                            $scope.login= (loginForm) ->
+                                console.log 'login', arguments
+                                $scope.user.$login (user) ->
+                                    #user.pass= loginForm.password.$modelValue
+                                    $window.location.href= '../project/'
+                                    $scope.notify 'done', 'authentication'
+                                , (err) ->
+                                    $scope.user.pass= ''
+                                    $scope.notify 'error', err
 
 
 
@@ -81,7 +82,7 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
 
                     a.navbar-brand(ng-class="{active:'index'==app.route.name}", ng-href="{{app.prefix}}/")
                         span jet engine
-                        sup {{app.version}}
+                        sup  {{app.version}}
 
                     .nav-collapse
 
@@ -148,7 +149,7 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                                     .col-xs-12
                                                         button.btn.btn-primary.btn-block(type='submit', ng-disabled='!loginPasswordForm.$valid')
                                                             i.icon-signin
-                                                            span Войти в кабинет
+                                                            span  Войти в кабинет
                                     .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-0.col-lg-3
                                         form.form.form-lg.dialog-form
                                             legend Вход с помощью
@@ -165,7 +166,7 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                 .navbar
                     a.navbar-brand(href='/')
                         span JET ENGINE
-                        sup v0.1
+                        sup  v0.1
                     .nav-collapse
                         ul.nav.navbar-nav
                             li: a(href='//awesome39.com'): u

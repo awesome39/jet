@@ -1,39 +1,43 @@
 extends ./layout
 
 append head-scripts
-    :coffeescript
+    script
+        :coffee
 
 
 
-        app= angular.module 'console', ['awesome']
-        app.constant 'version', '0.0.1'
-        app.constant 'path', ''
+            app= angular.module 'console', ['awesome']
+            app.constant 'version', '0.0.1'
+            app.constant 'path', ''
 
 
 
-        app.config ($routeProvider, path, AppServiceProvider) ->
-            console.log 'config console app', AppServiceProvider
+            app.config ($routeProvider, path, AppServiceProvider) ->
 
-            $routeProvider.when '/', AppServiceProvider.Route.factory 'index', 'view',
-                controller: 'IndexRouteCtrl', templateUrl:'partials/'
 
-            $routeProvider.when '/system', AppServiceProvider.Route.factory 'system', 'view',
-                controller: 'SystemRouteCtrl', templateUrl:'partials/system/'
 
-            $routeProvider.when '/status', AppServiceProvider.Route.factory 'status', 'view',
-                controller: 'StatusRouteCtrl', templateUrl:'partials/status/'
+                $routeProvider.when '/', AppServiceProvider.Route.factory 'index', 'view',
+                    controller: 'IndexRouteCtrl', templateUrl:'partials/'
 
-            $routeProvider.when '/:dialog', AppServiceProvider.Route.factory undefined, 'dialog',
-                controller: 'LoginRouteDialogCtrl'
+                $routeProvider.when '/system', AppServiceProvider.Route.factory 'system', 'view',
+                    controller: 'SystemRouteCtrl', templateUrl:'partials/system/'
 
-            $routeProvider.when '/:dialog/:tab', AppServiceProvider.Route.factory undefined, 'dialog',
-                controller: 'LoginRouteDialogCtrl'
+                $routeProvider.when '/status', AppServiceProvider.Route.factory 'status', 'view',
+                    controller: 'StatusRouteCtrl', templateUrl:'partials/status/'
 
-        app.controller 'IndexRouteCtrl', ($scope) ->
-            console.log 'IndexRouteCtrl'
+                $routeProvider.when '/:dialog', AppServiceProvider.Route.factory undefined, 'dialog',
+                    controller: 'LoginRouteDialogCtrl'
 
-        app.controller 'SystemRouteCtrl', ($scope) ->
-            console.log 'SystemRouteCtrl'
+                $routeProvider.when '/:dialog/:tab', AppServiceProvider.Route.factory undefined, 'dialog',
+                    controller: 'LoginRouteDialogCtrl'
 
-        app.controller 'StatusRouteCtrl', ($scope) ->
-            console.log 'StatusRouteCtrl'
+
+
+            app.controller 'IndexRouteCtrl', ($scope) ->
+                console.log 'IndexRouteCtrl'
+
+            app.controller 'SystemRouteCtrl', ($scope) ->
+                console.log 'SystemRouteCtrl'
+
+            app.controller 'StatusRouteCtrl', ($scope) ->
+                console.log 'StatusRouteCtrl'

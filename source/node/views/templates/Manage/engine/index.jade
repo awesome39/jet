@@ -4,46 +4,50 @@ extends ../layout
 
 append head-scripts
 
-    include includes/users/users.coffee
-    include includes/engine.coffee
+    script
+        include:coffee includes/users/users.coffee
 
-    :coffeescript
+    script
+        include:coffee includes/engine.coffee
 
-
-
-        app= angular.module 'manage', ['awesome', 'app', 'engine']
-        app.constant 'version', '0.2'
-
-        app.constant 'path', ''
+    script
+        :coffee
 
 
 
-        app.config ($routeProvider, path, AppServiceProvider) ->
+            app= angular.module 'manage', ['awesome', 'app', 'engine']
+            app.constant 'version', '0.2'
 
-            $routeProvider.when path+'/', AppServiceProvider.Route.factory 'index', 'view',
-                controller: 'IndexRouteCtrl', templateUrl: 'partials/'
-
-
-
-            # Пользователи
-
-            # Пользователи. Панель управления пользователями
-            $routeProvider.when '/users', AppServiceProvider.Route.factory 'users', 'view',
-                templateUrl: 'partials/users/', controller: 'UsersDashboardCtrl'
-
-            # Пользователи. Страница списка пользователей
-            $routeProvider.when '/users/user/~:page?/:query?', AppServiceProvider.Route.factory 'users-user-list', 'view',
-                templateUrl: 'partials/users/User/List/', controller: 'UsersUserListCtrl'
-
-            # Пользователи. Страница пользователя
-            $routeProvider.when '/users/user/:userId/:tab?/:mode?', AppServiceProvider.Route.factory 'users-user', 'dialog',
-                templateUrl: 'partials/users/User/Dialog/'
+            app.constant 'path', ''
 
 
 
-            # Диалоги
-            $routeProvider.when '/login/:tab?', AppServiceProvider.Route.factory 'login', 'dialog',
-                controller: 'LoginRouteDialogCtrl'
+            app.config ($routeProvider, path, AppServiceProvider) ->
+
+                $routeProvider.when path+'/', AppServiceProvider.Route.factory 'index', 'view',
+                    controller: 'IndexRouteCtrl', templateUrl: 'partials/'
+
+
+
+                # Пользователи
+
+                # Пользователи. Панель управления пользователями
+                $routeProvider.when '/users', AppServiceProvider.Route.factory 'users', 'view',
+                    templateUrl: 'partials/users/', controller: 'UsersDashboardCtrl'
+
+                # Пользователи. Страница списка пользователей
+                $routeProvider.when '/users/user/~:page?/:query?', AppServiceProvider.Route.factory 'users-user-list', 'view',
+                    templateUrl: 'partials/users/User/List/', controller: 'UsersUserListCtrl'
+
+                # Пользователи. Страница пользователя
+                $routeProvider.when '/users/user/:userId/:tab?/:mode?', AppServiceProvider.Route.factory 'users-user', 'dialog',
+                    templateUrl: 'partials/users/User/Dialog/'
+
+
+
+                # Диалоги
+                $routeProvider.when '/login/:tab?', AppServiceProvider.Route.factory 'login', 'dialog',
+                    controller: 'LoginRouteDialogCtrl'
 
 
 
@@ -53,7 +57,7 @@ block app-head
 
         a.navbar-brand(ng-class="{active:'index'==app.route.name}", ng-href="{{app.prefix}}/")
             span jet engine
-            sup {{app.version}}
+            sup  {{app.version}}
 
         .nav-collapse
 

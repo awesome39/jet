@@ -31,7 +31,7 @@ html(lang='ru', ng-app='console', ng-cloak, ng-controller='AppCtrl')
                 .navbar.navbar-static-top
                     a.navbar-brand(ng-class="{active:'index'==app.route.name}", ng-href="{{app.prefix}}/")
                         span jet console
-                        sup {{app.version}}
+                        sup  {{app.version}}
                     .nav-collapse
                         ul.nav.navbar-nav.pull-left
                             li(ng-class="{active:'system'==app.route.name}"): a(ng-href="{{app.prefix}}/system")
@@ -76,7 +76,7 @@ html(lang='ru', ng-app='console', ng-cloak, ng-controller='AppCtrl')
                                                     .col-xs-12
                                                         button.btn.btn-primary.btn-block(type='submit', ng-disabled='!loginPasswordForm.$valid')
                                                             i.icon-signin
-                                                            span Войти в кабинет
+                                                            span  Войти в кабинет
                                     .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-0.col-lg-3
                                         form.form.form-lg.dialog-form
                                             legend Вход с помощью
