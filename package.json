@@ -23,6 +23,7 @@
 
   "scripts": {
     "rock": "npm install bower",
+    "pron": "cd source/node/views/assets && bower install",
 
     "install-bower-clean": "cd source/node/views/assets && bower --allow-root cache clean",
     "install-bower": "cd source/node/views/assets && bower --allow-root --force install",
