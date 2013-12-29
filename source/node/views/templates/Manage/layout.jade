@@ -107,13 +107,13 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                             li(ng-class="{active:'login'==app.dialog.overlay}"): a(ng-href="{{app.prefix}}/login")
                                 u Sign In
 
-
             main.b-app--body: .row
                 style
                     :less
                         .layout-landing {
                             margin: 10% 15%;
                         }
+
                 .b-app--main(ng-view)
 
                 +bDialog('app')
@@ -156,6 +156,8 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
             menu.b-app--notifications(ng-if="app.notify.notifications.length")
                 .b-app--notification(ng-repeat="notification in app.notify.notifications")
                     p.note(ng-if="'error'==notification.type") {{notification}}
+
+            section.b-app--demo  
 
             footer.b-app--foot
                 .navbar
