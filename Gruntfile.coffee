@@ -23,6 +23,8 @@ module.exports= (grunt) ->
             scripts:
                 src: ['<%= pkg.config.build.app.node %>/views/scripts']
 
+            images:
+                src: ['<%= pkg.config.build.app.node %>/views/i']
 
 
         yaml:
@@ -88,7 +90,7 @@ module.exports= (grunt) ->
                     dest: '<%= pkg.config.build.app.node %>/db'
                 }]
 
-            scripts:
+            viewsScripts:
                 options:
                     bare: true
                 files: [{
@@ -103,7 +105,7 @@ module.exports= (grunt) ->
 
         jade:
 
-            views:
+            viewsTemplates:
                 options:
                     data:
                         debug: false
@@ -120,7 +122,7 @@ module.exports= (grunt) ->
 
         less:
 
-            views:
+            viewsStyles:
                 files: [{
                     expand: true
                     ext: '.css'
@@ -134,7 +136,15 @@ module.exports= (grunt) ->
 
         copy:
 
-            scripts:
+            viewsImages: # ресурсы видов
+                files: [{
+                    expand: true
+                    src: ['**/*.*']
+                    cwd: '<%= pkg.config.build.src.node %>/views/assets/i'
+                    dest: '<%= pkg.config.build.app.node %>/views/assets/i'
+                }]
+
+            viewsScripts: # скрипты видов
                 files: [{
                     expand: true
                     src: ['**/*.js']
@@ -142,7 +152,7 @@ module.exports= (grunt) ->
                     dest: '<%= pkg.config.build.app.node %>/views/assets/scripts'
                 }]
 
-            styles: # стили приложения
+            viewsStyles: # стили видов
                 files: [{
                     expand: true
                     src: ['**/*.css']
@@ -196,22 +206,28 @@ module.exports= (grunt) ->
                     event: ['added', 'deleted', 'changed']
                     cwd: '<%= pkg.config.build.src.node %>/views/templates/'
                 files: ['**/*.jade', '**/*.coffee']
-                tasks: ['clean:templates', 'jade']
+                tasks: ['jade']
+
+            images:
+                options:
+                    event: ['added', 'deleted', 'changed']
+                    cwd: '<%= pkg.config.build.src.node %>/views/assets/i'
+                files: ['**/*.coffee']
+                tasks: ['copy:viewsAwesomeImages', 'copy:viewsImages']
 
             styles:
                 options:
                     event: ['added', 'deleted', 'changed']
                     cwd: '<%= pkg.config.build.src.node %>/views/assets/styles'
                 files: ['**/*.less']
-                tasks: ['clean:styles', 'copy:styles', 'copy:viewsAwesomeStyles', 'less']
+                tasks: ['copy:viewsAwesomeStyles', 'copy:viewsStyles', 'less']
 
             scripts:
                 options:
                     event: ['added', 'deleted', 'changed']
                     cwd: '<%= pkg.config.build.src.node %>/views/assets/scripts'
                 files: ['**/*.coffee']
-                tasks: ['clean:scripts', 'copy:scripts', 'copy:viewsAwesomeScripts', 'coffee:scripts']
-
+                tasks: ['copy:viewsAwesomeScripts', 'copy:viewsScripts', 'coffee:scripts']
 
 
 
@@ -229,18 +245,19 @@ module.exports= (grunt) ->
     # сборка шаблонов
     grunt.registerTask 'templates', ['clean:templates', 'jade']
 
-    # сборка стилей
-    grunt.registerTask 'styles', ['clean:styles', 'copy:styles', 'copy:viewsAwesomeStyles', 'less']
-
-    # сборка скриптов
-    grunt.registerTask 'scripts', ['clean:scripts', 'copy:scripts', 'copy:viewsAwesomeScripts', 'coffee:scripts']
-
 
 
     # сборка приложения
 
-    grunt.registerTask 'build', ['yaml', 'coffee', 'jade', 'less', 'copy']
+    grunt.registerTask 'build', ['copy', 'yaml', 'coffee', 'jade', 'less']
+
     grunt.registerTask 'build-node', ['yaml', 'coffee']
+
+    grunt.registerTask 'build-views-images', ['clean:images', 'copy:viewsAwesomeImages', 'copy:viewsImages']
+    grunt.registerTask 'build-views-styles', ['clean:styles', 'copy:viewsAwesomeStyles', 'copy:viewsStyles', 'less']
+    grunt.registerTask 'build-views-scripts', ['clean:scripts', 'copy:viewsAwesomeScripts', 'copy:viewsScripts', 'coffee:viewsScripts']
+
+    grunt.registerTask 'build-views', ['build-views-images', 'build-views-styles', 'build-views-scripts']
 
     grunt.registerTask 'compile', ['clean:node', 'build']
     grunt.registerTask 'compile-node', ['build-node']
