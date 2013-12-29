@@ -148,41 +148,50 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
         dfd.promise
 
+
+
     @cacheIntoRedis: (profile, db) ->
         dfd= do deferred
-        try
 
-            key= ['profile',profile.id].join ':'
-            data= JSON.stringify profile
+        process.nextTick =>
+            try
 
-            db.client.set key, data, (err, reply) ->
-                log 'redis say', arguments
-                if not err
-                    dfd.resolve profile
-                else
-                    dfd.reject err
+                key= ['profile',profile.id].join ':'
+                data= JSON.stringify profile
 
-        catch err
-            dfd.reject err
+                db.client.set key, data, (err, reply) ->
+                    if not err
+                        dfd.resolve profile
+                    else
+                        dfd.reject err
+
+            catch err
+                dfd.reject err
 
         dfd.promise
+
+
 
     @getByIdFromRedis: (id, db) ->
         dfd= do deferred
-        try
 
-            key= ['profile',id].join ':'
+        process.nextTick =>
+            try
 
-            db.client.get key, (err, data) ->
-                if not err
-                    dfd.resolve if data then JSON.parse data else null
-                else
-                    dfd.reject err
+                key= ['profile',id].join ':'
 
-        catch err
-            dfd.reject err
+                db.client.get key, (err, data) ->
+                    if not err
+                        dfd.resolve if data then JSON.parse data else null
+                    else
+                        dfd.reject err
+
+            catch err
+                dfd.reject err
 
         dfd.promise
+
+
 
     @getById: (id, db) ->
         dfd= do deferred

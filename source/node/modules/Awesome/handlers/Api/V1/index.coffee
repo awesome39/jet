@@ -16,7 +16,7 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, au
 
                         hrtime= do process.hrtime
                         req.time.end= (hrtime[0] * 1e9 + hrtime[1])
-                        log 'resoled from redis', profile.id, (req.time.end - req.time.start) / 1e6 , 'ms'
+                        #log 'resoled from redis', profile.id, (req.time.end - req.time.start) / 1e6 , 'ms'
 
                         profile= null # КЕШ ВЫКЛЮЧЕН
 
