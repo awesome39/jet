@@ -23,6 +23,9 @@ module.exports= (grunt) ->
             scripts:
                 src: ['<%= pkg.config.build.app.node %>/views/scripts']
 
+            bower:
+                src: ['<%= pkg.config.build.src.node %>/views/assets/bower_components']
+
 
 
         yaml:
@@ -189,7 +192,7 @@ module.exports= (grunt) ->
 
 
          bower:
-            install:
+            main:
                 options:
                     targetDir: '<%= pkg.config.build.src.node %>/views/assets/bower_components'
                     layout: 'byComponent'
@@ -264,7 +267,7 @@ module.exports= (grunt) ->
 
     # сборка приложения
     grunt.registerTask 'app', ['yaml', 'coffee', 'jade', 'less', 'copy']
-    grunt.registerTask 'app-clean' ['clean:all'] #чистит вобще все епта
+    grunt.registerTask 'app-clean', ['clean:all'] #чистит вобще все епта
 
 
 

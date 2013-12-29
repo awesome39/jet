@@ -22,9 +22,11 @@
 
 
   "scripts": {
-    "install": "npm run-script install-bower && npm run-script install-app"
+    "install": "npm run-script install-bower && npm run-script install-app",
     "install-bower": "grunt bower",
     "install-app": "grunt yaml:nodeManifest && cd app/ && npm install",
+
+    "app": "grunt app",
 
     "recompile": "grunt recompile",
 
@@ -51,6 +53,7 @@
     "grunt-contrib-coffee": "latest",
     "grunt-contrib-jade": "latest",
     "grunt-contrib-less": "latest",
+    "grunt-bower-task": "latest",
     "grunt-yaml": "latest",
     "grunt-cli": "latest",
     "coffee-script": "latest",
