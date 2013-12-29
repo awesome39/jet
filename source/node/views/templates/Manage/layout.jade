@@ -49,24 +49,18 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                         action: 'logout'
 
                         app.controller 'AppHeadCtrl', ($rootScope, $scope, User) ->
-                            console.log 'AppHeadCtrl'
                             $rootScope.user= User.get (user) ->
                                     console.log 'удалось получить пользователя', user
                             ,   (err) ->
                                     console.log 'не удалось получить пользователя', err
 
                         app.controller 'LoginAppDialogCtrl', ($rootScope, $scope, User, $window) ->
-                            console.log 'LoginAppDialogCtrl'
-
                             if not $rootScope.user
                                 $rootScope.user= new User
-
-                            console.log 'User', $scope.user
                             $scope.login= (loginForm) ->
-                                console.log 'login', arguments
                                 $scope.user.$login (user) ->
                                     #user.pass= loginForm.password.$modelValue
-                                    $window.location.href= '../project/'
+                                    $window.location.href= '../engine/'
                                     $scope.notify 'done', 'authentication'
                                 , (err) ->
                                     $scope.user.pass= ''

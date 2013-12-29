@@ -90,9 +90,12 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, au
                             'accept': req.headers['accept']
                             'accept-encoding': req.headers['accept-encoding']
                             'accept-language': req.headers['accept-language']
-                        ProfileSession.insertMaria req.account.profileId, req.sessionID, req.ip, headers, req.maria, (err) ->
-                            do req.logout if err
-                            return next err
+                        session= ProfileSession.insertMaria req.account.profileId, req.sessionID, req.ip, headers, req.maria
+                        session (session) ->
+                                res.redirect '/'
+                        ,   (err) ->
+                                do req.logout
+                                next err
             return handler req, res, next
 
 
