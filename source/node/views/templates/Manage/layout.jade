@@ -115,10 +115,11 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
 
 
             main.b-app--body: .row
-                :less
-                    .layout-landing {
-                        margin: 10% 15%;
-                    }
+                style
+                    :less
+                        .layout-landing {
+                            margin: 10% 15%;
+                        }
                 .b-app--main(ng-view)
 
                 +bDialog('app')
