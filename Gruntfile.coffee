@@ -26,6 +26,10 @@ module.exports= (grunt) ->
             images:
                 src: ['<%= pkg.config.build.app.node %>/views/i']
 
+            bower:
+                src: ['<%= pkg.config.build.src.node %>/views/assets/bower_components']
+
+
 
         yaml:
             nodeManifest:
@@ -106,6 +110,7 @@ module.exports= (grunt) ->
         jade:
 
             viewsTemplates:
+
                 options:
                     data:
                         debug: false
@@ -199,8 +204,18 @@ module.exports= (grunt) ->
 
 
 
-        watch:
+        bower:
+            main:
+                options:
+                    targetDir: '<%= pkg.config.build.src.node %>/views/assets/bower_components'
+                    layout: 'byComponent'
+                    install: true
+                    cleanTargetDir: false
+                    cleanBowerDir: true
 
+
+
+        watch:
             templates:
                 options:
                     event: ['added', 'deleted', 'changed']
@@ -238,6 +253,7 @@ module.exports= (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-jade'
     grunt.loadNpmTasks 'grunt-contrib-less'
+    grunt.loadNpmTasks 'grunt-bower-task'
     grunt.loadNpmTasks 'grunt-yaml'
 
 
@@ -245,9 +261,21 @@ module.exports= (grunt) ->
     # сборка шаблонов
     grunt.registerTask 'templates', ['clean:templates', 'jade']
 
+    # сборка стилей
+    grunt.registerTask 'styles', ['copy:styles', 'copy:viewsAwesomeStyles', 'less']
+
+    # сборка скриптов
+    grunt.registerTask 'scripts', ['clean:scripts', 'copy:scripts', 'copy:viewsAwesomeScripts', 'coffee:scripts']
+
+    grunt.registerTask 'views', ['templates', 'styles', 'scripts']
+    grunt.registerTask 'views-clean', ['clean:templates', 'clean:styles', 'clean:scripts']
+
+    # сборка модулей
+    grunt.registerTask 'node_modules', ['coffee:nodeModules']
+    grunt.registerTask 'node_modules-clean', ['clean:nodeModules']
 
 
-    # сборка приложения
+
 
     grunt.registerTask 'build', ['copy', 'yaml', 'coffee', 'jade', 'less']
 
@@ -261,5 +289,3 @@ module.exports= (grunt) ->
 
     grunt.registerTask 'compile', ['clean:node', 'build']
     grunt.registerTask 'compile-node', ['build-node']
-
-    grunt.registerTask 'default', ['clean:all', 'build']

@@ -22,20 +22,19 @@
 
 
   "scripts": {
-    "install-bower-clean": "cd source/node/views/assets && bower --allow-root cache clean",
-    "install-bower": "cd source/node/views/assets && bower --allow-root --force install",
-    "install-awesome": "cd source/node/views/assets/bower_components/awesome && npm install",
+    "install": "npm run-script install-bower && npm run-script install-app",
+    "install-bower": "grunt bower",
     "install-app": "grunt yaml:nodeManifest && cd app/ && npm install",
 
-    "compile": "grunt compile",
-    "build": "grunt && npm run-script install-app",
+    "app": "grunt app",
 
-    "build-templates": "grunt templates",
-    "build-styles": "grunt styles",
-    "build-scripts": "grunt scripts",
+    "recompile": "grunt recompile",
+
+    "templates": "grunt templates",
+    "styles": "grunt styles",
+    "scripts": "grunt scripts",
 
     "start": "cd app && npm start",
-    "start-dev-node": "grunt compile-node && npm start",
 
     "watch": "grunt watch",
 
@@ -54,6 +53,7 @@
     "grunt-contrib-coffee": "latest",
     "grunt-contrib-jade": "latest",
     "grunt-contrib-less": "latest",
+    "grunt-bower-task": "latest",
     "grunt-yaml": "latest",
     "grunt-cli": "latest",
     "coffee-script": "latest",
