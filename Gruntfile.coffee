@@ -26,9 +26,6 @@ module.exports= (grunt) ->
             images:
                 src: ['<%= pkg.config.build.app.node %>/views/i']
 
-            bower:
-                src: ['<%= pkg.config.build.src.node %>/views/assets/bower_components']
-
 
 
         yaml:
