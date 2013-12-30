@@ -201,14 +201,14 @@ module.exports= (grunt) ->
 
 
 
-        bower:
-            main:
-                options:
-                    targetDir: '<%= pkg.config.build.src.node %>/views/assets/bower_components'
-                    layout: 'byComponent'
-                    install: true
-                    cleanTargetDir: false
-                    cleanBowerDir: true
+        #bower:
+        #    main:
+        #        options:
+        #            targetDir: '<%= pkg.config.build.src.node %>/views/assets/bower_components'
+        #            layout: 'byComponent'
+        #            install: true
+        #            cleanTargetDir: false
+        #            cleanBowerDir: true
 
 
 
@@ -250,7 +250,7 @@ module.exports= (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-jade'
     grunt.loadNpmTasks 'grunt-contrib-less'
-    grunt.loadNpmTasks 'grunt-bower-task'
+    #grunt.loadNpmTasks 'grunt-bower-task'
     grunt.loadNpmTasks 'grunt-yaml'
 
 
