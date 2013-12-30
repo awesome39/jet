@@ -159,10 +159,6 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
 
             footer.b-app--foot
                 .navbar
-                    a.navbar-brand(href='/')
-                        span JET ENGINE
-                        sup  v0.1
-                    .nav-collapse
-                        ul.nav.navbar-nav
-                            li: a(href='//awesome39.com'): u
-                                span by Awesome39
+                    a.navbar-brand(ng-class="{active:'index'==app.route.name}", ng-href="{{app.prefix}}/")
+                        span jet engine
+                        sup  {{app.version}}
