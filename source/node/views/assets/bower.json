@@ -1,7 +1,16 @@
 {
-  "name": "default-ui",
-  "version": "0.0.1",
+  "name": "jet-ui",
+  "version": "0.2.0",
   "dependencies": {
-    "awesome": "https://github.com/freaking-awesome/ui.git#release"
+    "awesome": "https://github.com/freaking-awesome/ui.git#master"
+  },
+  "resolutions": {
+    "angular": "1.2.3",
+    "angular-animate": "1.2.3",
+    "angular-resource": "1.2.3",
+    "angular-route": "1.2.3",
+    "angular-i18n": "1.2.3",
+    "bootstrap": "3.0.2",
+    "font-awesome": "4.0.3"
   }
 }

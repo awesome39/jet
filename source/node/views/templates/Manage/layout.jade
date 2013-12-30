@@ -142,7 +142,7 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                             .form-acts
                                                 .row
                                                     .col-xs-12
-                                                        button.btn.btn-primary.btn-block(type='submit', ng-disabled='!loginPasswordForm.$valid')
+                                                        button.b-btn.b-btn-primary.btn-block(type='submit', ng-disabled='!loginPasswordForm.$valid')
                                                             i.icon-signin
                                                             span  Войти в кабинет
                                     .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-0.col-lg-3
@@ -161,10 +161,6 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
 
             footer.b-app--foot
                 .navbar
-                    a.navbar-brand(href='/')
-                        span JET ENGINE
-                        sup  v0.1
-                    .nav-collapse
-                        ul.nav.navbar-nav
-                            li: a(href='//awesome39.com'): u
-                                span by Awesome39
+                    a.navbar-brand(ng-class="{active:'index'==app.route.name}", ng-href="{{app.prefix}}/")
+                        span jet engine
+                        sup  {{app.version}}

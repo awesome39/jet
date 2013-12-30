@@ -237,6 +237,7 @@ module.exports= class Awesome extends Module
 
 
             app.use (err, req, res, next) ->
+                console.error err
                 res.json
                     error: err.name
                     message: err.message
