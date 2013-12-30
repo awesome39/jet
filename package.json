@@ -22,21 +22,23 @@
 
 
   "scripts": {
-    "install": "npm run-script install-bower && npm run-script install-app",
-    "install-bower": "grunt bower",
-    "install-app": "grunt yaml:nodeManifest && cd app/ && npm install",
+    "install": "npm run-script install-views && npm run-script build && npm run-script install-node",
 
-    "app": "grunt app",
+    "install-views": "cd source/node/views/assets && bower install",
 
-    "recompile": "grunt recompile",
+    "build": "npm run-script build-node && npm run-script build-node-modules && npm run-script build-views",
+    "build-node": "grunt build-node",
+    "build-node-modules": "grunt build-node-modules",
+    "build-views": "grunt build-views",
 
-    "templates": "grunt templates",
-    "styles": "grunt styles",
-    "scripts": "grunt scripts",
+    "install-node": "cd app && npm install",
 
-    "start": "cd app && npm start",
+    "clean": "grunt clean",
+
+    "serve": "cd app && npm start",
 
     "watch": "grunt watch",
+    "start": "npm run-script build && npm run-script watch",
 
     "test": "grunt compile-node && mocha --harmony spec/tests/*.coffee --compilers coffee:coffee-script --reporter spec",
     "test-Awesome": "grunt compile-node && mocha --harmony spec/tests/node/modules/Awesome/*.coffee --compilers coffee:coffee-script --reporter spec"
@@ -46,6 +48,7 @@
 
   "devDependencies": {
     "bower": "latest",
+
     "grunt": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-contrib-clean": "latest",

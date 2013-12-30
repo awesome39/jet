@@ -258,34 +258,14 @@ module.exports= (grunt) ->
 
 
 
-    # сборка шаблонов
-    grunt.registerTask 'templates', ['clean:templates', 'jade']
-
-    # сборка стилей
-    grunt.registerTask 'styles', ['copy:styles', 'copy:viewsAwesomeStyles', 'less']
-
-    # сборка скриптов
-    grunt.registerTask 'scripts', ['clean:scripts', 'copy:scripts', 'copy:viewsAwesomeScripts', 'coffee:scripts']
-
-    grunt.registerTask 'views', ['templates', 'styles', 'scripts']
-    grunt.registerTask 'views-clean', ['clean:templates', 'clean:styles', 'clean:scripts']
-
-    # сборка модулей
-    grunt.registerTask 'node_modules', ['coffee:nodeModules']
-    grunt.registerTask 'node_modules-clean', ['clean:nodeModules']
-
-
-
-
     grunt.registerTask 'build', ['copy', 'yaml', 'coffee', 'jade', 'less']
 
-    grunt.registerTask 'build-node', ['yaml', 'coffee']
+    grunt.registerTask 'build-node', ['yaml', 'coffee:node']
+    grunt.registerTask 'build-node-modules', ['yaml', 'coffee:nodeModules']
 
-    grunt.registerTask 'build-views-images', ['clean:images', 'copy:viewsAwesomeImages', 'copy:viewsImages']
-    grunt.registerTask 'build-views-styles', ['clean:styles', 'copy:viewsAwesomeStyles', 'copy:viewsStyles', 'less']
-    grunt.registerTask 'build-views-scripts', ['clean:scripts', 'copy:viewsAwesomeScripts', 'copy:viewsScripts', 'coffee:viewsScripts']
+    grunt.registerTask 'build-views-images', ['copy:viewsAwesomeImages', 'copy:viewsImages']
+    grunt.registerTask 'build-views-styles', ['copy:viewsAwesomeStyles', 'copy:viewsStyles', 'less']
+    grunt.registerTask 'build-views-scripts', ['copy:viewsAwesomeScripts', 'copy:viewsScripts', 'coffee:viewsScripts']
+    grunt.registerTask 'build-views-templates', ['jade']
 
-    grunt.registerTask 'build-views', ['build-views-images', 'build-views-styles', 'build-views-scripts']
-
-    grunt.registerTask 'compile', ['clean:node', 'build']
-    grunt.registerTask 'compile-node', ['build-node']
+    grunt.registerTask 'build-views', ['build-views-images', 'build-views-styles', 'build-views-scripts', 'build-views-templates']
