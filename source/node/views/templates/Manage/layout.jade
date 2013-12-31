@@ -66,6 +66,19 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                     $scope.user.pass= ''
                                     $scope.notify 'error', err
 
+                        app.controller 'ViewCtrl', ($scope) ->
+                            $scope.edit= {
+                                dialog: {
+                                    overlay: null
+                                }
+                            }
+                            $scope.showEditDialog= (type) ->
+                                $scope.edit.dialog.overlay= type
+
+                        app.controller 'EditDialogCtrl', ($scope) ->
+                            $scope.hideEditDialog= () ->
+                                $scope.edit.dialog.overlay= null
+
 
 
     body(ng-controller='ViewCtrl'): block body

@@ -103,3 +103,17 @@ block view
                                     a.btn.btn-link(ng-click="addPhone()") + Еще телефон
                                 .form-acts
                                     button.btn(type='submit', ng-disabled="!ProfileForm.$valid") Сохранить профиль
+
+        +bEditDialog()
+            +bEditDialogArea()
+            +bEditDialogMain()
+                .b-projects-project--participants-edit-dialog
+                    +bEditDialogHead()
+                        i.icon-edit
+                        span Редактировать...
+                        +bEditDialogActs()
+                            a(ng-click="showHelp()"): u справка
+                            +bEditDialogActClose()
+                    +bEditDialogBody()
+                        .row
+                            .col-xs-12.col-md-7  
