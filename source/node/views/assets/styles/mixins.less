@@ -84,9 +84,9 @@
         width: 80px;
         padding: 0;
         background-color: #f2f2f2;
-
         .nav-list {
-            padding-top: 5px;
+            padding: 5px 0;
+
             & > li > a {
                 padding: 4px 9px 4px 24px;
             }
@@ -111,15 +111,28 @@
         margin-left: 80px;
         padding: 0 15px;
         background-color: #f2f2f2;
+        .section {
 
+        }
         .section-nav {
             margin: 9px 0;
             border-top: 1px solid #e2e2e2;
         }
         .article-nav {
-            margin-top: 9px; padding: 5px 0;
+            margin: 9px -5px; padding: 5px 0;
             border-top: 1px solid #e2e2e2;
+            border-bottom: 1px solid #e2e2e2;
         }
+
+        .article-foot {
+            margin: 9px -5px; padding: 5px 0;
+            border-top: 1px solid #e2e2e2;
+            border-bottom: 1px solid #e2e2e2;
+        }
+    }
+    &--foot {
+        padding: 0 15px;
+        border-bottom: 1px solid #e2e2e2;
     }
 }
 
