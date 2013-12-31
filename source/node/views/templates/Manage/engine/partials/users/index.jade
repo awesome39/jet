@@ -34,7 +34,8 @@ block b-page--main
     section.section.dashboard.row()
         nav.section-nav.col-xs-12.col-sm-4.col-lg-3
             menu.nav.nav-tags
-                li: a(ng-href="#/users/user/~") Все пользователи
+                li.active: a(ng-href="#/users/user/~") Профили пользователей
+                li: a(ng-href="#/users/group/~") Профили групп
         .col-xs-12.col-sm-8.col-lg-9
             article.article.card-list.row(ng-controller="UsersUserListCtrl")
                 .col-xs-12: nav.article-nav
