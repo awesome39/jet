@@ -6,6 +6,8 @@ append head-scripts
 
     script
         include:coffee includes/users/users.coffee
+    script
+        include:coffee includes/reports/reports.coffee
 
     script
         include:coffee includes/engine.coffee
@@ -26,6 +28,14 @@ append head-scripts
 
                 $routeProvider.when path+'/', AppServiceProvider.Route.factory 'index', 'view',
                     controller: 'IndexRouteCtrl', templateUrl: 'partials/'
+
+
+
+                # Отчеты
+
+                # Отчеты. Панель управления отчетами
+                $routeProvider.when '/reports', AppServiceProvider.Route.factory 'reports', 'view',
+                    templateUrl: 'partials/reports/', controller: 'ReportsDashboardCtrl'
 
 
 
@@ -62,6 +72,10 @@ block app-head
         .nav-collapse
 
             ul.nav.navbar-nav.pull-left
+
+                li(ng-class="{active:'reports'==app.route.name}"): a(ng-href="{{app.prefix}}/reports")
+                    u Отчеты
+                    i.caret
 
                 li(ng-class="{active:'users'==app.route.name}"): a(ng-href="{{app.prefix}}/users")
                     u Пользователи
