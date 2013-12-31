@@ -4,7 +4,18 @@ extends ./layout
 
 block b-page--head
     h1 Управление пользователями
-
+    menu.b-page-head--menu
+        li.active: a: u Профили
+        li: a: u Разрешения
+    //.b-page-head--btns.row
+        .col-xs-3
+            a.b-page-head--btn.btn() HEAD WIDGET
+        .col-xs-3
+            a.b-page-head--btn.btn() HEAD WIDGET
+        .col-xs-3
+            a.b-page-head--btn.btn.primary() HEAD WIDGET .primary
+        .col-xs-3
+            a.b-page-head--btn.btn() HEAD WIDGET
 
 
 block b-page--side
