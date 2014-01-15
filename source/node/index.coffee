@@ -33,11 +33,11 @@ module.exports= (env, manifest, log) ->
 
 
 
-    injector.invoke (app, App, $auth, session) ->
+    injector.invoke (app, App, $auth) ->
         app.use do App.cookieParser
         app.use do App.json
 
-        app.use session.init
+        app.use $auth.$session.init
             key:'manage.sid', secret:'user'
 
         app.use do $auth.init

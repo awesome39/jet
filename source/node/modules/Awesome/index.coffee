@@ -24,6 +24,13 @@ module.exports= class Awesome extends Module
 
         @factory 'Audit', require './services/Audit'
 
+        @factory 'Auth', require './services/Auth'
+        @factory 'AuthSession', require './services/AuthSession'
+        @factory 'Authenticate', require './services/Authenticate'
+        @factory 'Authorize', require './services/Authorize'
+
+
+
         @factory '$audit', (Audit, log) ->
             $audit= new Audit config
 
@@ -35,31 +42,27 @@ module.exports= class Awesome extends Module
 
 
 
-        @factory 'Auth', require './services/Auth'
+        @factory '$auth', (Auth, $session) ->
+            $auth= new Auth config
 
-        @factory '$auth', (Auth) ->
-            new Auth config
+            $auth.$session= $session
+
+            $auth
 
 
-
-        @factory 'Authenticate', require './services/Authenticate'
 
         @factory '$authenticate', (Authenticate) ->
             new Authenticate config
 
 
 
-        @factory 'Authorize', require './services/Authorize'
-
         @factory '$authorize', (Authorize) ->
             new Authorize config
 
 
 
-        @factory 'Session', require './services/Session'
-
-        @factory 'session', (Session) ->
-            new Session
+        @factory '$session', (AuthSession) ->
+            new AuthSession
 
 
 
