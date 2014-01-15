@@ -20,8 +20,14 @@ module.exports= class AppModule extends Module
 
         @factory 'log', () ->
             log= console.log
-            log.namespace= (name) -> (args...) ->
-                log name, args...
+            log.color= require 'cli-color'
+
+            log.namespace= (name) ->
+                l= (args...) ->
+                    log log.color.red(name), args...
+                l.color= log.color
+                l
+
             log
 
 
