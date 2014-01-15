@@ -5,6 +5,8 @@ module.exports= (log) -> class MariaMapper
 
 
     constructor: (config) ->
+        log= log.namespace '[MariaMapper]'
+        log 'Created.', do process.hrtime
 
         @pool= maria.createPool config
 

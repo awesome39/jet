@@ -130,7 +130,7 @@ module.exports= class Awesome extends Module
         @factory 'awesome', (AwesomeApi, $authorize, db, log, $audit, $authenticate) ->
             app= new AwesomeApi
 
-            app.use db.redis.middleware
+            app.use db.redis.middleware()
             app.use db.maria.middleware()
 
             app.head '/users', (req, res) ->
