@@ -130,10 +130,8 @@ module.exports= class Awesome extends Module
             app.use db.redis.middleware
             app.use db.maria.middleware()
 
-            app.use AwesomeApi.loadProfile()
-
             app.head '/users', (req, res) ->
-                res.setHeader 'x-jetcraft-api', 'Awesone Users API'
+                res.setHeader 'x-jetcraft-api', 'Awesome Users API'
                 res.setHeader 'x-jetcraft-api-version', 1
                 do res.end
 
