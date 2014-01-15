@@ -1,14 +1,13 @@
-module.exports= (log) -> class AccessService
+module.exports= (log) -> class AuthorizeService
 
     constructor: () ->
 
-        log= log.namespace '[AccessService]'
-
+        log= log.namespace '[AuthorizeService]'
         log 'Created.', do process.hrtime
 
 
 
-        access= (role) ->
+        authorize= (role) ->
             log 'Created middleware.', do process.hrtime
 
             (req, res, next) ->
@@ -29,8 +28,8 @@ module.exports= (log) -> class AccessService
 
 
 
-        @constructor.prototype.__proto__= access.__proto__
-        access.__proto__= AccessService.prototype
+        @constructor.prototype.__proto__= authorize.__proto__
+        authorize.__proto__= AuthorizeService.prototype
 
-        return access
+        return authorize
 

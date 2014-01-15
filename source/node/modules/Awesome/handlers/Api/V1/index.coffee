@@ -1,4 +1,4 @@
-module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, auth, log) ->
+module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, $auth, log) ->
     class AwesomeApi extends App
 
 
@@ -75,7 +75,7 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, au
 
         @authUser: () -> (req, res, next) ->
             log 'AUTH LOCAL', req.body
-            handler= auth.authenticate 'local', (err, account) ->
+            handler= $auth.authenticate 'local', (err, account) ->
                 log 'AUTH LOCAL', arguments
                 if not account
                     return res.json 400, account
@@ -101,7 +101,7 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, au
 
 
         @authUserGithub: () -> (req, res, next) ->
-            handler= auth.authenticate 'github', (err, account) ->
+            handler= $auth.authenticate 'github', (err, account) ->
                 account= AccountGithub.auth account, req.maria
                 account (account) ->
                     if not account

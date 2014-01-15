@@ -2,10 +2,11 @@
 
 module.exports= (Account, AccountGithub, cfg, log) -> class AuthService extends Passport
 
-
-
     constructor: () ->
         super
+
+        log= log.namespace '[AuthService]'
+        log 'Created.', do process.hrtime
 
         @serializeUser= (account, done) ->
             #console.log 'serialize account', account

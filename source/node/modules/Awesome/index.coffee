@@ -22,13 +22,6 @@ module.exports= class Awesome extends Module
 
 
 
-        @factory 'Access', require './services/Access'
-
-        @factory '$access', (Access) ->
-            new Access config
-
-
-
         @factory 'Audit', require './services/Audit'
 
         @factory '$audit', (Audit) ->
@@ -38,8 +31,22 @@ module.exports= class Awesome extends Module
 
         @factory 'Auth', require './services/Auth'
 
-        @factory 'auth', (Auth) ->
+        @factory '$auth', (Auth) ->
             new Auth config
+
+
+
+        @factory 'Authenticate', require './services/Authenticate'
+
+        @factory '$authenticate', (Authenticate) ->
+            new Authenticate config
+
+
+
+        @factory 'Authorize', require './services/Authorize'
+
+        @factory '$authorize', (Authorize) ->
+            new Authorize config
 
 
 
@@ -60,14 +67,14 @@ module.exports= class Awesome extends Module
         #
         # Экземпляр приложения аутентификации
         #
-        @factory 'authentication', (AwesomeApi, auth, AccountGithub, ProfileSession, db, log) ->
+        @factory 'authentication', (AwesomeApi, $auth, AccountGithub, ProfileSession, db, log) ->
             app= new AwesomeApi
 
             ###
             Аутентифицирует пользователя с помощью Гитхаба.
             ###
             app.get '/auth/github'
-            ,   auth.authenticate('github')
+            ,   $auth.authenticate('github')
 
             ###
             Аутентифицирует пользователя с Гитхаба.
@@ -76,7 +83,7 @@ module.exports= class Awesome extends Module
             ,   db.maria.middleware()
             ,   (req, res, next) ->
 
-                    handler= auth.authenticate 'github', (err, account, info) ->
+                    handler= $auth.authenticate 'github', (err, account, info) ->
 
                         account= AccountGithub.auth account, req.maria
                         account (account) ->
@@ -111,7 +118,7 @@ module.exports= class Awesome extends Module
         #
         # @version 1
         #
-        @factory 'awesome', (AwesomeApi, $access, db, log, $audit) ->
+        @factory 'awesome', (AwesomeApi, $authorize, db, log, $audit, $authenticate) ->
             app= new AwesomeApi
 
             app.use db.redis.middleware
@@ -128,7 +135,8 @@ module.exports= class Awesome extends Module
             Отдает аутентифицированного пользователя.
             ###
             app.get '/user'
-            ,   $access('profile.select')
+            ,   $authenticate('user')
+            ,   $authorize('profile.select')
             ,   $audit('Get personal information')
             ,   (req, res, next) ->
                     req.profile (profile) ->
@@ -142,9 +150,12 @@ module.exports= class Awesome extends Module
             Отдает список пользователей.
             ###
             app.get '/users'
-            ,   $access('profiles.select')
+            ,   $authenticate('user')
+            ,   $authorize('profiles.select')
+            ,   $audit('Get personal information')
 
             ,   AwesomeApi.queryProfile()
+
             ,   (req, res, next) ->
                     req.profiles (profiles) ->
                             log 'profiles resolved', profiles
@@ -157,7 +168,9 @@ module.exports= class Awesome extends Module
             Добавляет пользователя.
             ###
             app.post '/users'
-            ,   $access('profiles.insert')
+            ,   $authenticate('user')
+            ,   $authorize('profiles.insert')
+            ,   $audit('Add personal information')
 
             ,   db.maria.middleware.transaction()
 
@@ -176,9 +189,12 @@ module.exports= class Awesome extends Module
             Отдает указанного пользователя.
             ###
             app.get '/users/:userId(\\d+)'
-            ,   $access('profiles.select')
+            ,   $authenticate('user')
+            ,   $authorize('profiles.select')
+            ,   $audit('Get personal information')
 
             ,   AwesomeApi.getProfile('userId')
+
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'selected profile resolved', profile
@@ -191,7 +207,9 @@ module.exports= class Awesome extends Module
             Обновляет указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)'
-            ,   $access('profiles.update')
+            ,   $authenticate('user')
+            ,   $authorize('profiles.update')
+            ,   $audit('Upd personal information')
 
             ,   db.maria.middleware.transaction()
 
@@ -213,9 +231,12 @@ module.exports= class Awesome extends Module
             Удаляет указанного пользователя.
             ###
             app.delete '/users/:userId(\\d+)'
-            ,   $access('profiles.delete')
+            ,   $authenticate('user')
+            ,   $authorize('profiles.delete')
+            ,   $audit('Del personal information')
 
             ,   AwesomeApi.deleteProfile('userId')
+
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'deleted profile resolved', profile
@@ -225,9 +246,12 @@ module.exports= class Awesome extends Module
             Включает или выключает указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)/enable'
-            ,   $access('profiles.enable')
+            ,   $authenticate('user')
+            ,   $authorize('profiles.enable')
+            ,   $audit('Act personal information')
 
             ,   AwesomeApi.enableProfile('userId')
+
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'enabled profile resolved', profile
