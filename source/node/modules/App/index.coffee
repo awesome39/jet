@@ -9,7 +9,7 @@ module.exports= class AppModule extends Module
 
 
 
-    constructor: (env, config= {}) ->
+    constructor: (config= {}, env= 'development') ->
         super
 
 
@@ -19,7 +19,10 @@ module.exports= class AppModule extends Module
 
 
         @factory 'log', () ->
-            console.log
+            log= console.log
+            log.namespace= (name) -> (args...) ->
+                log name, args...
+            log
 
 
 

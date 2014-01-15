@@ -13,8 +13,8 @@ module.exports= (env, manifest, log) ->
 
 
     injector= new di.Injector [
-        new App(env, manifest.config)
-        new Awesome()
+        new App(manifest.config, env)
+        new Awesome(manifest.config)
     ]
 
 
