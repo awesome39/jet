@@ -18,9 +18,7 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, $a
 
 
         @authUser: () -> (req, res, next) ->
-            log 'AUTH LOCAL', req.body
             handler= $auth.authenticate 'local', (err, account) ->
-                log 'AUTH LOCAL', arguments
                 if not account
                     return res.json 400, account
                 account= Account.auth account, req.maria
@@ -40,7 +38,7 @@ module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, $a
                         ,   (err) ->
                                 do req.logout
                                 next err
-            return handler req, res, next
+            handler req, res, next
 
 
 

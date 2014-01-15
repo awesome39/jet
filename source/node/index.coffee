@@ -90,16 +90,16 @@ module.exports= (env, manifest, log) ->
         #
         # Обработчик Authentication API
         #
-        app.use '/', injector.invoke (authentication) ->
-            authentication
+        app.use '/', injector.invoke (awesomeAuthentication) ->
+            awesomeAuthentication
 
 
 
         #
         # Обработчик Awesome API
         #
-        app.use '/api/v1', injector.invoke (awesome) ->
-            awesome
+        app.use '/api/v1', injector.invoke (awesomeApi) ->
+            awesomeApi
 
 
 

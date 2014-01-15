@@ -76,7 +76,7 @@ module.exports= class Awesome extends Module
         #
         # Экземпляр приложения аутентификации
         #
-        @factory 'authentication', (AwesomeApi, $auth, AccountGithub, ProfileSession, db, log) ->
+        @factory 'awesomeAuthentication', (AwesomeApi, $auth, AccountGithub, ProfileSession, db, log) ->
             app= new AwesomeApi
 
             ###
@@ -127,7 +127,7 @@ module.exports= class Awesome extends Module
         #
         # @version 1
         #
-        @factory 'awesome', (AwesomeApi, $authorize, db, log, $audit, $authenticate) ->
+        @factory 'awesomeApi', (AwesomeApi, $audit, $authenticate, $authorize, db, log) ->
             app= new AwesomeApi
 
             app.use db.redis.middleware()
