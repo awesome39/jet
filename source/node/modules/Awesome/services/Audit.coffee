@@ -1,3 +1,5 @@
+ware= require 'ware'
+
 module.exports= (log) -> class AuditService
 
     constructor: () ->
@@ -8,12 +10,22 @@ module.exports= (log) -> class AuditService
 
 
         audit= (something) ->
-            log 'Created middleware.', do process.hrtime
+            log 'Created middleware.'
 
             (req, res, next) ->
 
                 log 'Audit It!', something
-                do next
+                audit.ware.run something, (err, something) ->
+                    log 'Audited:', something
+                    do next
+
+
+
+        audit.ware= do ware
+
+        audit.use= ->
+            log 'Use', arguments
+            audit.ware.use.apply audit.ware, arguments
 
 
 

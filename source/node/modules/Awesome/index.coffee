@@ -24,8 +24,14 @@ module.exports= class Awesome extends Module
 
         @factory 'Audit', require './services/Audit'
 
-        @factory '$audit', (Audit) ->
-            new Audit config
+        @factory '$audit', (Audit, log) ->
+            $audit= new Audit config
+
+            $audit.use (something, next) ->
+                log 'Audit!', something
+                do next
+
+            $audit
 
 
 
