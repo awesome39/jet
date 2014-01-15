@@ -2,7 +2,7 @@ module.exports= (log) -> class AutchenticateService
 
     constructor: () ->
 
-        log= log.namespace '[AutchenticateService]'
+        log= log.namespace '[AuthenticateService]'
         log do process.hrtime, 'Created.'
 
 
