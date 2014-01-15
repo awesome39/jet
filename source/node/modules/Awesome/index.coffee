@@ -2,7 +2,7 @@
 
 module.exports= class Awesome extends Module
 
-    constructor: () ->
+    constructor: (config= {}) ->
         super
 
 
@@ -24,15 +24,22 @@ module.exports= class Awesome extends Module
 
         @factory 'Access', require './services/Access'
 
-        @factory 'access', (Access) ->
-            new Access
+        @factory '$access', (Access) ->
+            new Access config
+
+
+
+        @factory 'Audit', require './services/Audit'
+
+        @factory '$audit', (Audit) ->
+            new Audit config
 
 
 
         @factory 'Auth', require './services/Auth'
 
         @factory 'auth', (Auth) ->
-            new Auth
+            new Auth config
 
 
 
@@ -104,7 +111,7 @@ module.exports= class Awesome extends Module
         #
         # @version 1
         #
-        @factory 'awesome', (AwesomeApi, access, db, log) ->
+        @factory 'awesome', (AwesomeApi, $access, db, log, $audit) ->
             app= new AwesomeApi
 
             app.use db.redis.middleware
@@ -121,8 +128,8 @@ module.exports= class Awesome extends Module
             Отдает аутентифицированного пользователя.
             ###
             app.get '/user'
-            ,   access('profile.select')
-
+            ,   $access('profile.select')
+            ,   $audit('Get personal information')
             ,   (req, res, next) ->
                     req.profile (profile) ->
                             log 'profile resolved', profile
@@ -135,7 +142,7 @@ module.exports= class Awesome extends Module
             Отдает список пользователей.
             ###
             app.get '/users'
-            ,   access('profiles.select')
+            ,   $access('profiles.select')
 
             ,   AwesomeApi.queryProfile()
             ,   (req, res, next) ->
@@ -150,7 +157,7 @@ module.exports= class Awesome extends Module
             Добавляет пользователя.
             ###
             app.post '/users'
-            ,   access('profiles.insert')
+            ,   $access('profiles.insert')
 
             ,   db.maria.middleware.transaction()
 
@@ -169,7 +176,7 @@ module.exports= class Awesome extends Module
             Отдает указанного пользователя.
             ###
             app.get '/users/:userId(\\d+)'
-            ,   access('profiles.select')
+            ,   $access('profiles.select')
 
             ,   AwesomeApi.getProfile('userId')
             ,   (req, res, next) ->
@@ -184,7 +191,7 @@ module.exports= class Awesome extends Module
             Обновляет указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)'
-            ,   access('profiles.update')
+            ,   $access('profiles.update')
 
             ,   db.maria.middleware.transaction()
 
@@ -206,7 +213,7 @@ module.exports= class Awesome extends Module
             Удаляет указанного пользователя.
             ###
             app.delete '/users/:userId(\\d+)'
-            ,   access('profiles.delete')
+            ,   $access('profiles.delete')
 
             ,   AwesomeApi.deleteProfile('userId')
             ,   (req, res, next) ->
@@ -218,7 +225,7 @@ module.exports= class Awesome extends Module
             Включает или выключает указанного пользователя.
             ###
             app.post '/users/:userId(\\d+)/enable'
-            ,   access('profiles.enable')
+            ,   $access('profiles.enable')
 
             ,   AwesomeApi.enableProfile('userId')
             ,   (req, res, next) ->
