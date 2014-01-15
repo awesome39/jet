@@ -1,5 +1,5 @@
 {
-  "name": "Jet", "version":"0.3.1", "license": "GPL",
+  "name": "Jet", "version":"0.3.3", "license": "GPL",
   "repository": { "type": "git", "url": "https://bitbucket.com/awesome39/jet"},
 
 
@@ -26,7 +26,7 @@
   "scripts": {
     "install": "npm run-script install-source && npm run-script build && npm run-script install-app",
 
-    "install-source": "cd source/node/views/assets && bower install",
+    "install-source": "cd source/pub/assets && bower install",
 
     "build": "npm run-script build-node && npm run-script build-node-modules && npm run-script build-views",
     "build-node": "grunt build-node",
