@@ -1,5 +1,5 @@
 ~*
-source/node/views/assets/bower_components/*
+source/pub/assets/bower_components/*
 node_modules/*
 app/*
 *.log

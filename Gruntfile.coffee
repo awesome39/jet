@@ -15,16 +15,16 @@ module.exports= (grunt) ->
                 src: ['<%= pkg.config.build.app.nodeModules %>']
 
             templates:
-                src: ['<%= pkg.config.build.app.node %>/views/templates']
+                src: ['<%= pkg.config.build.app.pub %>/templates']
 
             styles:
-                src: ['<%= pkg.config.build.app.node %>/views/styles']
+                src: ['<%= pkg.config.build.app.pub %>/styles']
 
             scripts:
-                src: ['<%= pkg.config.build.app.node %>/views/scripts']
+                src: ['<%= pkg.config.build.app.pub %>/scripts']
 
             images:
-                src: ['<%= pkg.config.build.app.node %>/views/i']
+                src: ['<%= pkg.config.build.app.pub %>/i']
 
 
 
@@ -98,8 +98,8 @@ module.exports= (grunt) ->
                     expand: true
                     ext: '.js'
                     src: ['**/*.coffee']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/scripts'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/scripts'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/scripts'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/scripts'
                 }]
 
 
@@ -115,8 +115,8 @@ module.exports= (grunt) ->
                     expand: true
                     ext: '.html'
                     src: ['**/*.jade', '!**/layout.jade']
-                    cwd: '<%= pkg.config.build.src.node %>/views/templates'
-                    dest: '<%= pkg.config.build.app.node %>/views/templates'
+                    cwd: '<%= pkg.config.build.src.pub %>/templates'
+                    dest: '<%= pkg.config.build.app.pub %>/templates'
 
                 }]
 
@@ -129,8 +129,8 @@ module.exports= (grunt) ->
                     expand: true
                     ext: '.css'
                     src: ['**/*.less']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/styles'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/styles'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/styles'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/styles'
 
                 }]
 
@@ -142,53 +142,53 @@ module.exports= (grunt) ->
                 files: [{
                     expand: true
                     src: ['**/*.*']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/i'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/i'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/i'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/i'
                 }]
 
             viewsScripts: # скрипты видов
                 files: [{
                     expand: true
                     src: ['**/*.js']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/scripts'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/scripts'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/scripts'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/scripts'
                 }]
 
             viewsStyles: # стили видов
                 files: [{
                     expand: true
                     src: ['**/*.css']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/styles'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/styles'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/styles'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/styles'
                 }]
 
             viewsAwesomeStyles: # осомный стиль
                 files: [{
                     expand: true
                     src: ['**/*.css']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/bower_components/awesome/css'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/styles'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/bower_components/awesome/css'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/styles'
                 }]
             viewsAwesomeFont:
                 files: [{
                     expand: true
                     src: ['**/*', '!**/*.json', '!**/*.md']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/bower_components/awesome/font'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/font'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/bower_components/awesome/font'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/font'
                 }]
             viewsAwesomeImages:
                 files: [{
                     expand: true
                     src: ['**/*', '!**/*.json', '!**/*.md']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/bower_components/awesome/i'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/media'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/bower_components/awesome/i'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/media'
                 }]
             viewsAwesomeScripts:
                 files: [{
                     expand: true
                     src: ['**/*.js']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/bower_components/awesome/js'
-                    dest: '<%= pkg.config.build.app.node %>/views/assets/scripts'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/bower_components/awesome/js'
+                    dest: '<%= pkg.config.build.app.pub %>/assets/scripts'
                 }]
 
             sql:
@@ -204,7 +204,7 @@ module.exports= (grunt) ->
         #bower:
         #    main:
         #        options:
-        #            targetDir: '<%= pkg.config.build.src.node %>/views/assets/bower_components'
+        #            targetDir: '<%= pkg.config.build.src.pub %>/assets/bower_components'
         #            layout: 'byComponent'
         #            install: true
         #            cleanTargetDir: false
@@ -216,28 +216,28 @@ module.exports= (grunt) ->
             templates:
                 options:
                     event: ['added', 'deleted', 'changed']
-                    cwd: '<%= pkg.config.build.src.node %>/views/templates/'
+                    cwd: '<%= pkg.config.build.src.pub %>/templates/'
                 files: ['**/*.jade', '**/*.coffee']
                 tasks: ['jade']
 
             images:
                 options:
                     event: ['added', 'deleted', 'changed']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/i'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/i'
                 files: ['**/*.coffee']
                 tasks: ['copy:viewsAwesomeImages', 'copy:viewsImages']
 
             styles:
                 options:
                     event: ['added', 'deleted', 'changed']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/styles'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/styles'
                 files: ['**/*.less']
                 tasks: ['copy:viewsAwesomeStyles', 'copy:viewsStyles', 'less']
 
             scripts:
                 options:
                     event: ['added', 'deleted', 'changed']
-                    cwd: '<%= pkg.config.build.src.node %>/views/assets/scripts'
+                    cwd: '<%= pkg.config.build.src.pub %>/assets/scripts'
                 files: ['**/*.coffee']
                 tasks: ['copy:viewsAwesomeScripts', 'copy:viewsScripts', 'coffee:scripts']
 

@@ -9,12 +9,14 @@
       "app": {
         "root": "app",
         "node": "app/node",
-        "nodeModules": "app/node_modules"
+        "nodeModules": "app/node_modules",
+        "pub": "app/pub"
       },
       "src": {
         "root": "source",
         "node": "source/node",
-        "nodeModules": "source/node_modules"
+        "nodeModules": "source/node_modules",
+        "pub": "source/pub"
       }
     }
   },

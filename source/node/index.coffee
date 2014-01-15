@@ -29,7 +29,7 @@ module.exports= (env, manifest, log) ->
 
         app.use do App.compress
 
-        app.use App.static "#{__dirname}/views/assets"
+        app.use App.static "#{__dirname}/../pub/assets"
 
 
 
@@ -83,7 +83,7 @@ module.exports= (env, manifest, log) ->
 
 
 
-        app.use App.static "#{__dirname}/views/templates/Manage"
+        app.use App.static "#{__dirname}/../pub/templates/Manage"
 
 
 
