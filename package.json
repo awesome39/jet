@@ -1,5 +1,5 @@
 {
-  "name": "Jet", "version":"0.3.3", "license": "GPL",
+  "name": "Jet", "version":"0.4.0", "license": "GPL",
   "repository": { "type": "git", "url": "https://bitbucket.com/awesome39/jet"},
 
 
@@ -37,7 +37,7 @@
 
     "clean": "grunt clean",
 
-    "serve": "cd app && npm start",
+    "serve": "npm run-script build-node && cd app && npm start",
 
     "watch": "grunt watch",
     "start": "npm run-script build && npm run-script watch"

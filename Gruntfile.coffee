@@ -138,6 +138,14 @@ module.exports= (grunt) ->
 
         copy:
 
+            nodeViews:
+                files: [{
+                    expand: true
+                    src: ['**/*.*']
+                    cwd: '<%= pkg.config.build.src.node %>/views'
+                    dest: '<%= pkg.config.build.app.node %>/views'
+                }]
+
             viewsImages: # ресурсы видов
                 files: [{
                     expand: true
@@ -257,7 +265,7 @@ module.exports= (grunt) ->
 
     grunt.registerTask 'build', ['copy', 'yaml', 'coffee', 'jade', 'less']
 
-    grunt.registerTask 'build-node', ['yaml', 'coffee:node']
+    grunt.registerTask 'build-node', ['yaml', 'coffee:node', 'copy:nodeViews']
     grunt.registerTask 'build-node-modules', ['yaml', 'coffee:nodeModules']
 
     grunt.registerTask 'build-views-images', ['copy:viewsAwesomeImages', 'copy:viewsImages']
