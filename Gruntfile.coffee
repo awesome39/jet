@@ -34,6 +34,7 @@ module.exports= (grunt) ->
                     space: 4
                 files:
                     '<%= pkg.config.build.app.root %>/package.json': '<%= pkg.config.build.src.root %>/package.yaml'
+                    '<%= pkg.config.build.app.node %>/modules/modules.json': '<%= pkg.config.build.src.node %>/modules/modules.yaml'
 
 
 

@@ -1,7 +1,7 @@
 di= require 'di'
+modules= require './modules/modules'
 
-App= require './modules/App'
-Awesome= require './modules/Awesome'
+
 
 ###
 Возвращает настроенный экзмепляр приложения.
@@ -11,10 +11,12 @@ module.exports= (manifest, env) ->
 
 
 
-    injector= new di.Injector [
-        new App(manifest.config, env)
-        new Awesome(manifest.config)
-    ]
+    enabled= []
+    for mod in modules.enabled
+        Mod= require "./modules/#{mod}"
+        enabled.push new Mod manifest.config, env
+
+    injector= new di.Injector enabled
 
 
 
