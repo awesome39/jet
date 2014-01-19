@@ -39,7 +39,7 @@ if cluster.isWorker
 
     d.run ->
         App= require './node/index'
-        app= App 'development', manifest, log
+        app= App manifest, 'development'
 
         cfg= app.get 'config'
 

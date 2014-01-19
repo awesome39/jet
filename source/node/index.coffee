@@ -6,9 +6,8 @@ Awesome= require './modules/Awesome'
 ###
 Возвращает настроенный экзмепляр приложения.
 ###
-module.exports= (env, manifest, log) ->
+module.exports= (manifest, env) ->
     cfg= manifest.config
-    log= log
 
 
 
