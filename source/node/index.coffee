@@ -92,10 +92,10 @@ module.exports= (manifest, env) ->
 
 
         #
-        # Обработчик Authentication API
+        # Обработчик Awesome
         #
-        app.use '/', injector.invoke (awesomeAuthentication) ->
-            awesomeAuthentication
+        app.use '/', injector.invoke (awesome) ->
+            awesome
 
 
 

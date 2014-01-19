@@ -1,5 +1,188 @@
-module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, $auth, log) ->
+module.exports= (App, Account, AccountGithub, Group, Profile, ProfileSession, $audit, $auth, $authenticate, $authorize, db, log) ->
     class AwesomeApi extends App
+
+        constructor: () ->
+            app= super
+
+
+
+            app.set 'log', log= log.namespace '[AwesomeApp]'
+            log 'construct...'
+
+
+
+            app.use db.redis.middleware()
+            app.use db.maria.middleware()
+
+
+
+            app.head '/users', (req, res) ->
+                res.setHeader 'x-jetcraft-api', 'Awesome Users API'
+                res.setHeader 'x-jetcraft-api-version', 1
+                do res.end
+
+
+
+            ###
+            Отдает аутентифицированного пользователя.
+            ###
+            app.get '/user'
+            ,   $authenticate('user')
+            ,   $authorize('profile.select')
+            ,   $audit('Get personal information')
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'profile rejected', err
+                            next err
+
+
+
+            ###
+            Отдает список пользователей.
+            ###
+            app.get '/users'
+            ,   $authenticate('user')
+            ,   $authorize('profiles.select')
+            ,   $audit('Get personal information')
+
+            ,   AwesomeApi.queryProfile()
+
+            ,   (req, res, next) ->
+                    req.profiles (profiles) ->
+                            log 'profiles resolved', profiles
+                            res.json profiles
+                    ,   (err) ->
+                            log 'profiles rejected', err
+                            next err
+
+
+
+            ###
+            Добавляет пользователя.
+            ###
+            app.post '/users'
+            ,   $authenticate('user')
+            ,   $authorize('profiles.insert')
+            ,   $audit('Add personal information')
+
+            ,   db.maria.middleware.transaction()
+
+            ,   AwesomeApi.createProfile()
+            ,   AwesomeApi.createProfileEmails()
+            ,   AwesomeApi.createProfilePhones()
+
+            ,   db.maria.middleware.transaction.commit()
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'created profile resolved', profile
+                            res.json 201, res.profile
+
+
+
+            ###
+            Отдает указанного пользователя.
+            ###
+            app.get '/users/:userId(\\d+)'
+            ,   $authenticate('user')
+            ,   $authorize('profiles.select')
+            ,   $audit('Get personal information')
+
+            ,   AwesomeApi.getProfile('userId')
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'selected profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'selected profile rejected', err
+                            next err
+
+
+
+            ###
+            Обновляет указанного пользователя.
+            ###
+            app.post '/users/:userId(\\d+)'
+            ,   $authenticate('user')
+            ,   $authorize('profiles.update')
+            ,   $audit('Upd personal information')
+
+            ,   db.maria.middleware.transaction()
+
+            ,   AwesomeApi.updateProfile('userId')
+            ,   AwesomeApi.updateProfileEmails()
+            ,   AwesomeApi.updateProfilePhones()
+
+            ,   db.maria.middleware.transaction.commit()
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'updated profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'updated profile rejected', err
+                            next err
+
+
+
+            ###
+            Удаляет указанного пользователя.
+            ###
+            app.delete '/users/:userId(\\d+)'
+            ,   $authenticate('user')
+            ,   $authorize('profiles.delete')
+            ,   $audit('Del personal information')
+
+            ,   AwesomeApi.deleteProfile('userId')
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'deleted profile resolved', profile
+                            res.json profile
+
+
+
+            ###
+            Включает или выключает указанного пользователя.
+            ###
+            app.post '/users/:userId(\\d+)/enable'
+            ,   $authenticate('user')
+            ,   $authorize('profiles.enable')
+            ,   $audit('Act personal information')
+
+            ,   AwesomeApi.enableProfile('userId')
+
+            ,   (req, res, next) ->
+                    req.profile (profile) ->
+                            log 'enabled profile resolved', profile
+                            res.json profile
+                    ,   (err) ->
+                            log 'enabled profile rejected', err
+                            next err
+
+
+
+            app.post '/user/login'
+            ,   AwesomeApi.authUser()
+            ,   (req, res, next) ->
+                    res.json req.account
+
+
+
+            app.use (err, req, res, next) ->
+                console.error err
+                res.json
+                    error: err.name
+                    message: err.message
+                ,   500
+
+
+
+            return app
 
 
 

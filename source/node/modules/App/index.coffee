@@ -24,7 +24,7 @@ module.exports= class AppModule extends Module
 
             log.namespace= (name) ->
                 l= (args...) ->
-                    log log.color.red(name), args...
+                    log log.color.magenta(name), args...
                 l.color= log.color
                 l
 
