@@ -71,10 +71,31 @@ module.exports= class Awesome extends Module
         #
         @factory 'AwesomeApp', require './handlers'
 
+
+
         #
         # Класс приложения Awesome API
         #
         @factory 'AwesomeApi', require './handlers/Api/V1'
+
+
+
+        #
+        # Класс приложения Awesome Permissions API
+        #
+        @factory 'AwesomePermissionsApi', require './handlers/Api/V1/Permissions'
+
+
+
+        #
+        # Класс приложения Awesome Profile API
+        #
+        @factory 'AwesomeProfileApi', require './handlers/Api/V1/Profile'
+
+        #
+        # Класс приложения Awesome Profiles API
+        #
+        @factory 'AwesomeProfilesApi', require './handlers/Api/V1/Profiles'
 
 
 
