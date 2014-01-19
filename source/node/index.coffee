@@ -49,6 +49,9 @@ module.exports= (env, manifest, log) ->
 
         app.set 'db', db
 
+        app.set 'views', "#{__dirname}/views"
+        app.set 'view engine', 'jade'
+
 
 
         app.enable 'strict routing'
