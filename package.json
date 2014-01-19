@@ -34,6 +34,9 @@
     "build-views": "grunt build-views",
 
     "install-app": "cd app && npm install",
+    "install-app-modules": "npm run-script install-app-modules-App && npm run-script install-app-modules-Awesome",
+    "install-app-modules-App": "cd app/node/modules/App && npm install",
+    "install-app-modules-Awesome": "cd app/node/modules/Awesome && npm install",
 
     "clean": "grunt clean",
 
