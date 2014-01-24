@@ -45,6 +45,13 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
 
 
 
+            app.get '/logout'
+            ,   (req, res, next) ->
+                    req.logout()
+                    res.send 200
+
+
+
             return app
 
 

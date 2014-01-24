@@ -96,7 +96,7 @@ block app-head
                         strong {{user.name}}
                         i.caret
                     menu.nav.nav-list.dropdown-menu
-                        li: a() Выход
+                        li: a(ng-click="logout()") Выход
 
             ul.nav.navbar-nav.pull-right(ng-if="!user")
 
