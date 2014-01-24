@@ -1,6 +1,7 @@
 app= angular.module 'engine'
-,   ['engine.users', 'ngResource', 'ngRoute']
+,   ['engine.users', 'engine.reports', 'ngResource', 'ngRoute']
 ,   ($routeProvider) ->
 
         $routeProvider.otherwise
             redirectTo: '/'
+

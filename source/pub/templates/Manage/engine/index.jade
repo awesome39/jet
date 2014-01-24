@@ -27,7 +27,7 @@ append head-scripts
             app.config ($routeProvider, path, AppServiceProvider) ->
 
                 $routeProvider.when path+'/', AppServiceProvider.Route.factory 'index', 'view',
-                    controller: 'IndexRouteCtrl', templateUrl: 'partials/'
+                    templateUrl: 'partials/', controller: 'IndexRouteCtrl'
 
 
 
@@ -58,6 +58,11 @@ append head-scripts
                 # Диалоги
                 $routeProvider.when '/login/:tab?', AppServiceProvider.Route.factory 'login', 'dialog',
                     controller: 'LoginRouteDialogCtrl'
+
+
+
+            app.controller 'IndexRouteCtrl', ($scope) ->
+                console.log 'IndexRouteCtrl'
 
 
 
