@@ -48,11 +48,18 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                     params:
                                         action: 'logout'
 
+                                registration:
+                                    method: 'post'
+                                    params:
+                                        action: 'registration'
+
+
                         app.controller 'AppHeadCtrl', ($rootScope, $scope, User) ->
                             $rootScope.user= User.get (user) ->
                                     console.log 'удалось получить пользователя', user
                             ,   (err) ->
                                     console.log 'не удалось получить пользователя', err
+
 
                         app.controller 'LoginAppDialogCtrl', ($rootScope, $scope, User, $window) ->
                             if not $rootScope.user
@@ -119,6 +126,9 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
 
                             li(ng-class="{active:'login'==app.dialog.overlay}"): a(ng-href="{{app.prefix}}/login")
                                 u Sign In
+
+                            li(ng-class="{active:'login'==app.dialog.overlay}"): a(ng-href="{{app.prefix}}/registration")
+                                u Registration
 
             main.b-app--body: .row
                 style
