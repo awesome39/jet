@@ -21,7 +21,7 @@ npm run-script build
 
 Собирает исходники и следит за изменениями:
 ```
-npm run-script build
+npm run-script watch
 ```
 
  
