@@ -90,8 +90,16 @@ module.exports= (log) -> class ProfileSession
                         sessionId= ?,
                         ip= ?,
                         headers= ?
+
+                    ON DUPLICATE KEY
+                    UPDATE
+
+                        profileId= ?,
+                        sessionId= ?,
+                        ip= ?,
+                        headers= ?
                     """
-                ,   [@table, profileId, sessionId, ip, headers]
+                ,   [@table, profileId, sessionId, ip, headers, profileId, sessionId, ip, headers]
                 ,   (err, res) =>
                         log 'INSERTED SESS', err, res
                         if not err
