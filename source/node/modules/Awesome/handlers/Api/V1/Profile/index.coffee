@@ -28,13 +28,19 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
             ,   $authenticate('user')
             ,   $authorize('profile.select')
             ,   $audit('Get personal information')
+
             ,   (req, res, next) ->
-                    req.profile (profile) ->
-                            log 'profile resolved', profile
-                            res.json profile
-                    ,   (err) ->
-                            log 'profile rejected', err
-                            next err
+                    try
+
+                        req.profile (profile) ->
+                                log 'profile resolved', profile
+                                res.json profile
+                        ,   (err) ->
+                                log 'profile rejected', err
+                                next err
+
+                    catch err
+                        next new AwesomeProfileApiError
 
 
 
@@ -52,7 +58,27 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
 
 
 
+            ###
+            Обрабатывает ошибки.
+            ###
+            app.use (err, req, res, next) =>
+
+                if err instanceof AwesomeProfileApiError
+
+                    res.json
+                        message: err.message
+
+                    ,   500
+
+                else
+
+                    next err
+
+
+
             return app
+
+
 
 
 
@@ -105,3 +131,14 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
             ,   (err) ->
                     res.errors.push res.error= err
                     next(err)
+
+
+
+
+
+
+
+class AwesomeProfileApiError extends Error
+
+    constructor: (message= 'Awesome Profile API Error') ->
+        @message= message

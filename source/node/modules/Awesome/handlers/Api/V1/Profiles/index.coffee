@@ -31,13 +31,16 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
 
             ,   AwesomeProfilesApi.queryProfile()
 
-            ,   (req, res, next) ->
-                    req.profiles (profiles) ->
-                            log 'profiles resolved', profiles
-                            res.json profiles
-                    ,   (err) ->
-                            log 'profiles rejected', err
-                            next err
+            ,   (req, res, next) =>
+                    try
+                        req.profiles (profiles) ->
+                                log 'profiles resolved', profiles
+                                res.json profiles
+                        ,   (err) ->
+                                log 'profiles rejected', err
+                                next err
+                    catch err
+                        next new AwesomeProfilesApiError
 
 
 
@@ -58,9 +61,15 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
             ,   db.maria.middleware.transaction.commit()
 
             ,   (req, res, next) ->
-                    req.profile (profile) ->
-                            log 'created profile resolved', profile
-                            res.json 201, res.profile
+                    try
+                        req.profile (profile) ->
+                                log 'created profile resolved', profile
+                                res.json 201, res.profile
+                        ,   (err) ->
+                                log 'created profile rejected', err
+                                next err
+                    catch err
+                        next new AwesomeProfilesApiError
 
 
 
@@ -75,13 +84,15 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
             ,   AwesomeProfilesApi.getProfile('userId')
 
             ,   (req, res, next) ->
-                    req.profile (profile) ->
-                            log 'selected profile resolved', profile
-                            res.json profile
-                    ,   (err) ->
-                            log 'selected profile rejected', err
-                            next err
-
+                    try
+                        req.profile (profile) ->
+                                log 'selected profile resolved', profile
+                                res.json profile
+                        ,   (err) ->
+                                log 'selected profile rejected', err
+                                next err
+                    catch err
+                        next new AwesomeProfilesApiError
 
 
             ###
@@ -101,13 +112,15 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
             ,   db.maria.middleware.transaction.commit()
 
             ,   (req, res, next) ->
-                    req.profile (profile) ->
-                            log 'updated profile resolved', profile
-                            res.json profile
-                    ,   (err) ->
-                            log 'updated profile rejected', err
-                            next err
-
+                    try
+                        req.profile (profile) ->
+                                log 'updated profile resolved', profile
+                                res.json profile
+                        ,   (err) ->
+                                log 'updated profile rejected', err
+                                next err
+                    catch err
+                        next new AwesomeProfilesApiError
 
 
             ###
@@ -121,10 +134,15 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
             ,   AwesomeProfilesApi.deleteProfile('userId')
 
             ,   (req, res, next) ->
-                    req.profile (profile) ->
-                            log 'deleted profile resolved', profile
-                            res.json profile
-
+                    try
+                        req.profile (profile) ->
+                                log 'deleted profile resolved', profile
+                                res.json profile
+                        ,   (err) ->
+                                log 'deleted profile rejected', err
+                                next err
+                    catch err
+                        next new AwesomeProfilesApiError
 
 
             ###
@@ -138,16 +156,39 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
             ,   AwesomeProfilesApi.enableProfile('userId')
 
             ,   (req, res, next) ->
-                    req.profile (profile) ->
-                            log 'enabled profile resolved', profile
-                            res.json profile
-                    ,   (err) ->
-                            log 'enabled profile rejected', err
-                            next err
+                    try
+                        req.profile (profile) ->
+                                log 'enabled profile resolved', profile
+                                res.json profile
+                        ,   (err) ->
+                                log 'enabled profile rejected', err
+                                next err
+                    catch err
+                        next new AwesomeProfilesApiError
+
+
+
+            ###
+            Обрабатывает ошибки.
+            ###
+            app.use (err, req, res, next) =>
+
+                if err instanceof AwesomeProfilesApiError
+
+                    res.json
+                        message: err.message
+
+                    ,   500
+
+                else
+
+                    next err
 
 
 
             return app
+
+
 
 
 
@@ -253,3 +294,14 @@ module.exports= (App, Profile, $audit, $authenticate, $authorize, db, log) ->
                     if err instanceof Profile.enable.BadValueError then res.status 400
                     if err instanceof Profile.enable.NotFoundError then res.status 404
                     next(err)
+
+
+
+
+
+
+
+class AwesomeProfilesApiError extends Error
+
+    constructor: (message= 'Awesome Profiles API Error') ->
+        @message= message

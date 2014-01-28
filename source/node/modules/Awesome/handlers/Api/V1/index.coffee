@@ -25,7 +25,7 @@ module.exports= (App, AwesomePermissionsApi, AwesomeProfileApi, AwesomeProfilesA
 
 
             app.use (err, req, res, next) ->
-                log 'ERROR', err
+
                 res.json
                     error: err.name
                     message: err.message
