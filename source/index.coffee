@@ -21,8 +21,6 @@ if cluster.isMaster
     app.use express.logger 'dev'
     app.use express.static "#{__dirname}/node/views/assets"
     app.use express.static "#{__dirname}/node/views/templates/Console"
-    app.listen cfg.console.port, ->
-        console.log "console listening on #{cfg.console.port}, cluster online"
     nWorkers= (do os.cpus).length
     for i in [1..nWorkers]
         worker= do cluster.fork
