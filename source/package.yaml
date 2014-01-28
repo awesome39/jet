@@ -10,10 +10,6 @@ config:
 
 
 
-    console:
-        port: 8002
-
-
 
     path: ./node
 
