@@ -123,6 +123,7 @@ module.exports= class Awesome extends Module
 
 
 
-    init: (log) ->
+    init: (injector) ->
 
-        log 'INIT MODULE'
+        injector.invoke (log) ->
+            log 'INIT MODULE'
