@@ -127,3 +127,30 @@ module.exports= class Awesome extends Module
 
         injector.invoke (log) ->
             log 'INIT MODULE'
+
+        injector.invoke (app, App, $auth) ->
+
+            app.use do App.cookieParser
+            app.use do App.json
+
+            app.use $auth.$session.init
+                key:'manage.sid', secret:'user'
+
+            app.use do $auth.init
+            app.use do $auth.sess
+
+
+
+            #
+            # Обработчик Awesome
+            #
+            app.use '/', injector.invoke (awesome) ->
+                awesome
+
+
+
+            #
+            # Обработчик Awesome API
+            #
+            app.use '/api/v1', injector.invoke (awesomeApi) ->
+                awesomeApi

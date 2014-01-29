@@ -134,5 +134,10 @@ module.exports= class AppModule extends Module
 
     init: (injector) ->
 
-        injector.invoke (log) ->
-            log 'INIT MODULE'
+        injector.invoke (app, db, srv, log) ->
+
+            app.set 'db', db
+
+            app.set 'server', srv
+
+            app.set 'injector', injector
