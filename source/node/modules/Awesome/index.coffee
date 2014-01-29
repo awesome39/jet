@@ -2,8 +2,14 @@
 
 module.exports= class Awesome extends Module
 
+
+
     constructor: (config= {}) ->
         super
+
+
+
+        @config= @constructor.manifest.config or {}
 
 
 
@@ -114,3 +120,9 @@ module.exports= class Awesome extends Module
         #
         @factory 'awesomeApi', (AwesomeApi) ->
             new AwesomeApi
+
+
+
+    init: (log) ->
+
+        log 'INIT MODULE'

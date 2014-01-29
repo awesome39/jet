@@ -14,6 +14,10 @@ module.exports= class AppModule extends Module
 
 
 
+        @config= @constructor.manifest.config or {}
+
+
+
         @value 'config', config
 
 
@@ -125,3 +129,9 @@ module.exports= class AppModule extends Module
                 db.redis= new Redis cfg.db.redis
 
             db
+
+
+
+    init: (log) ->
+
+        log 'INIT MODULE'

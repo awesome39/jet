@@ -14,9 +14,14 @@ module.exports= (manifest, env) ->
     enabled= []
     for mod in modules.enabled
         Mod= require "./modules/#{mod}"
+        Mod.manifest= require "./modules/#{mod}/package"
+
         enabled.push new Mod manifest.config, env
 
     injector= new di.Injector enabled
+
+    for mod in enabled
+        injector.invoke mod.init
 
 
 
