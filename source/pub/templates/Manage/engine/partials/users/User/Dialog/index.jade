@@ -20,8 +20,8 @@ block view
                     a(ng-href="{{dialog.location}}") Информация
                 li(ng-class="{active:'profile'==dialog.tab, disable:dialog.tabs.disabled.profile}")
                     a(ng-href="{{dialog.location}}/profile") Профиль пользователя
-                li(ng-class="{active:'account'==dialog.tab, disable:dialog.tabs.disabled.account}")
-                    a(ng-href="{{dialog.location}}/account") Аккаунты
+                li(ng-class="{active:'auth'==dialog.tab, disable:dialog.tabs.disabled.auth}")
+                    a(ng-href="{{dialog.location}}/auth") Безопасность
 
         +bDialogBody()
 
@@ -77,7 +77,67 @@ block view
                                     a.b-users-user--session.b-label.list--item(ng-repeat="session in model.sessions", ng-href="#/sessions/{{session.sessionId}}"): u
                                         span.b-users-user--session--name {{session.sessionId}}
 
-            .b-users-user(ng-if="'profile'==dialog.tab")
+            .b-users-user(ng-if="'profile'==dialog.tab", style="padding:5% 0")
+                .b-dialog--main-side
+                .b-dialog--main-main
+                    .row
+                        .col-xs-12.col-md-6
+                            style.
+                                .deleted input {
+                                    text-decoration: line-through;
+                                }
+                                .form .fieldset {
+                                    margin-top: 5%;
+                                }
+                                .form .fieldset--footer {
+                                    margin-top: 10%;
+                                }
+                                .form legend {
+                                    margin-bottom: 10px;
+                                }
+                                .form .input, .form .btn {
+                                    margin: 0 0 10px;
+                                    padding: 9px 14px;
+                                }
+                                legend a {
+                                    margin: -10px -15px; padding: 10px 15px;
+                                    margin-left: 15px;
+                                    cursor: pointer;
+                                }
+                            form.form(name='ProfileForm', ng-submit="save(ProfileForm)")
+                                input.input(name='name', placeholder='Псевдоним', required, ng-model="model.name", ng-pattern="/^[a-z][a-z0-9]{2,}$/")
+                                input.input(name='title', placeholder='Полное имя пользователя', required, ng-model="model.title")
+
+                                fieldset.fieldset(name='ProfileEmailsForm')
+                                    .row
+                                        .col-xs-12
+                                            legend Адреса
+                                                a.pull-right(ng-click="addEmail()") +
+                                    .row(ng-repeat="email in model.emails", ng-class="{deleted:email.deleted}")
+                                        .col-xs-8
+                                            input.input(name='emails[]', placeholder='Электронная почта', required, ng-model="email.value", ng-pattern="/^.+@.+$/")
+                                        .col-xs-4(ng-if="!email.deleted")
+                                            a.btn.btn-link(ng-click="remEmail(email)") −
+                                        .col-xs-4(ng-if="email.deleted")
+                                            a.btn.btn-link(ng-click="resEmail(email)") +
+
+                                fieldset.fieldset(name='ProfilePhonesForm')
+                                    .row
+                                        .col-xs-12
+                                            legend Телефоны
+                                                a.pull-right(ng-click="addPhone()") +
+                                    .row(ng-repeat="phone in model.phones", ng-class="{deleted:phone.deleted}")
+                                        .col-xs-8
+                                            input.input(name='phones[]', placeholder='Телефон', required, ng-model="phone.value", ng-pattern="/^\\+[0-9 \-]+$/")
+                                        .col-xs-4(ng-if="!phone.deleted")
+                                            a.btn.btn-link(ng-click="remPhone(phone)") −
+                                        .col-xs-4(ng-if="phone.deleted")
+                                            a.btn.btn-link(ng-click="resPhone(phone)") +
+
+                                fieldset.fieldset.fieldset--footer.form-acts
+                                    button.btn(type='submit', ng-disabled="!ProfileForm.$valid") Сохранить профиль
+
+            .b-users-user(ng-if="'auth'==dialog.tab")
                 .b-dialog--main-side
                 .b-dialog--main-main
                     .row
