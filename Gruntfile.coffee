@@ -29,14 +29,22 @@ module.exports= (grunt) ->
 
 
         yaml:
-            nodeManifest:
+            node:
                 options:
                     space: 4
                 files:
                     '<%= pkg.config.build.app.root %>/package.json': '<%= pkg.config.build.src.root %>/package.yaml'
-                    '<%= pkg.config.build.app.node %>/modules/modules.json': '<%= pkg.config.build.src.node %>/modules/modules.yaml'
-                    '<%= pkg.config.build.app.node %>/modules/App/package.json': '<%= pkg.config.build.src.node %>/modules/App/package.yaml'
-                    '<%= pkg.config.build.app.node %>/modules/Awesome/package.json': '<%= pkg.config.build.src.node %>/modules/Awesome/package.yaml'
+
+            modules:
+                options:
+                    space: 4
+                files: [{
+                    expand: true
+                    ext: '.json'
+                    src: ['**/*.yaml']
+                    cwd: '<%= pkg.config.build.src.node %>/modules/'
+                    dest: '<%= pkg.config.build.app.node %>/modules/'
+                }]
 
 
 
