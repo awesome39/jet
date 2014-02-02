@@ -77,10 +77,14 @@ module.exports= (log) -> class Account
         process.nextTick =>
             try
 
+                if not profileId
+                    throw new @create.BadValueError 'profileId cannot be null'
+
                 if not data
                     throw new @create.BadValueError 'data cannot be null'
 
                 data= new @ data
+                data.pass= @sha1 data.pass
 
                 db.query """
                     INSERT
