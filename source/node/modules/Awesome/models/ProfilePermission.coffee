@@ -60,7 +60,7 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
                     WHERE
                         ProfilePermission.id= LAST_INSERT_ID()
                     """
-                ,   [@table, profileId, @Permission.Permission.tablePermission, name, @table]
+                ,   [@table, profileId, @Permission.tablePermission, name, @table]
                 ,   (err, res) =>
                         if not err
                             if res[0].affectedRows == 1 and res[1].length == 1
