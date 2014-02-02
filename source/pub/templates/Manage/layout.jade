@@ -49,7 +49,7 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
                                         action: 'logout'
 
 
-                        app.controller 'AppHeadCtrl', ($rootScope, $scope, User) ->
+                        app.controller 'AppHeadCtrl', ($rootScope, $scope, User, $window) ->
                             $rootScope.user= User.get (user) ->
                                     console.log 'удалось получить пользователя', user
                             ,   (err) ->
@@ -139,41 +139,9 @@ html(lang='ru', ng-app='manage', ng-controller='AppCtrl')
 
                 .b-app--main(ng-view)
 
-                +bDialog('app')
-                    +bDialogArea()
-                    +bDialogMain()
+                +bLoginAppDialog()
 
-                        .b-include-dialog(ng-if="dialog.overlay && dialog.templateUrl"): .b-include(ng-include="dialog.templateUrl")
 
-                        .b-users-login-dialog(ng-if="'login'==dialog.overlay", ng-controller="LoginAppDialogCtrl")
-                            +bDialogHead()
-                                i.icon-signin
-                                span Вход в центр управления
-                                +bDialogActs()
-                                    +bDialogActClose()
-                            +bDialogTabs()
-                                ul.nav.nav-tabs.pull-left
-                                    li(ng-class="{active:!dialog.tab}"): a(ng-href="{{app.prefix}}/login") Вход в кабинет
-                                    li(ng-class="{active:'console'==dialog.tab}"): a(ng-href="{{app.prefix}}/login/console") Вход в консоль
-                            +bDialogBody()
-                                .row
-                                    .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-2.col-lg-5
-                                        form.form.form-lg(name='loginPasswordForm', ng-submit='login(loginPasswordForm)').dialog-form
-                                            legend Вход с паролем
-                                            input.input(type='text', name='username', placeholder='Пользователь', required, ng-model='user.username')
-                                            input.input(type='password', name='password', placeholder='Пароль', required, ng-model='user.password')
-                                            .form-acts
-                                                .row
-                                                    .col-xs-12
-                                                        button.b-btn.b-btn-primary.btn-block(type='submit', ng-disabled='!loginPasswordForm.$valid')
-                                                            i.icon-signin
-                                                            span  Войти в кабинет
-                                    .col-xs-12.col-sm-offset-2.col-sm-8.col-lg-offset-0.col-lg-3
-                                        form.form.form-lg.dialog-form
-                                            legend Вход с помощью
-                                            input(type='hidden', ng-model="lol", required)
-                                            a.btn.btn-link(href='/auth/github'): u Вход c Github
-                                            a.btn.btn-link(href='/auth/google'): u Вход c Google
 
 
             menu.b-app--notifications(ng-if="app.notify.notifications.length")
