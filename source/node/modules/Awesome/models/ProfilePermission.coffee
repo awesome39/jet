@@ -34,8 +34,6 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
                 if not name
                     throw new @createByName.BadValueError 'name cannot be null'
 
-                data= new @ data
-
                 db.query """
                     INSERT
                         ??
