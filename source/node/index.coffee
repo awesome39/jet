@@ -21,7 +21,8 @@ module.exports= (manifest, env) ->
     injector= new di.Injector enabled
 
     for mod in enabled
-        injector.invoke mod.init, mod
+        if mod.init
+            injector.invoke mod.init, mod
 
 
 

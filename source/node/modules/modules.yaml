@@ -1,5 +1,21 @@
 
 enabled:
-    - App
-    - Awesome
 
+    - AeLog
+
+    - AeConfig
+
+    - AeDb
+    - AeDbMaria
+    - AeDbRedis
+
+    - AeApp
+    - AeAppServer
+
+    - AeAppAuthentication
+    - AeAppAuthenticationGithub
+    - AeAppAuthorization
+    - AeAppAudit
+
+    - AeApiProfile
+    - AeApiProfiles

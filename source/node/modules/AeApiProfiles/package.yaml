@@ -1,0 +1,12 @@
+name: ApiProfiles
+description: Profiles API
+
+version: 0.1.0
+
+
+
+config:
+
+    dependencies:
+
+        App: latest
