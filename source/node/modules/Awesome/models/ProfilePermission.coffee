@@ -79,3 +79,67 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
     @createByName.BadValueError= class CreateBadValueError extends Error
         constructor: (message) ->
             @message= message
+
+
+
+
+
+    @enable: (id, enabled, db, done) ->
+        dfd= do deferred
+        try
+
+            err= null
+            if not id
+                err= new @enable.BadValueError 'id cannot be null'
+
+            enabled= enabled|0
+
+            if err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
+                return dfd.reject err
+
+            db.query """
+                UPDATE
+                    ??
+                   SET
+                    enabledAt= IF(?, IF(enabledAt, enabledAt, NOW()), NULL)
+                 WHERE
+                    id= ?
+                ;
+                SELECT
+                    enabledAt
+                  FROM
+                    ??
+                 WHERE
+                    id= ?
+                """
+            ,   [@table, enabled, id, @table, id]
+            ,   (err, res) =>
+
+                if not err
+                    enabledAt= res[1][0].enabledAt
+                    enabled= !!enabledAt
+                    dfd.resolve
+                        enabledAt: enabledAt
+                        enabled: enabled
+                else
+                    dfd.reject err
+
+                if done instanceof Function
+                    process.nextTick ->
+                        done err, state
+
+        catch err
+            dfd.reject err
+
+        dfd.promise
+
+    @enable.BadValueError= class EnableBadValueError extends Error
+        constructor: (message) ->
+            @message= message
+
+    @enable.NotFoundError= class EnableNotFoundError extends Error
+        constructor: (message) ->
+            @message= message
