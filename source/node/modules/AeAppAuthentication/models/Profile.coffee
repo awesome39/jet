@@ -35,7 +35,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @query: (query, db) ->
+    @query: (query, db, done) ->
         dfd= do deferred
 
         profiles= null
@@ -153,7 +153,14 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                                 profiles.push new @ row
                         dfd.resolve profiles
 
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
+
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -209,10 +216,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @getById: (id, db) ->
+    @getById: (id, db, done) ->
         dfd= do deferred
 
-        profile= null
         process.nextTick =>
             try
 
@@ -318,151 +324,175 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
                 ,   (err, rows) =>
+                        if err
+                            throw new Error err
+                        if rows.length == 0
+                            throw new @getById.NotFoundError 'not found'
+                        if rows.length and not rows[0].id
+                            throw new @getById.NotFoundError 'not found'
 
-                        if not err and rows.length and not rows[0].id
-                            err= Error 'profile not found'
+                        profile= new @ rows.shift()
+                        dfd.resolve profile
 
-                        if not err
-                            if rows.length
-                                profile= new @ rows.shift()
-                            dfd.resolve profile
-                        else
-                            dfd.reject err
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
+
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
         dfd.promise
 
     @getById.BadValueError= class GetByIdBadValueError extends Error
-    constructor: (message) ->
-        @message= message
+        constructor: (message) ->
+            @message= message
 
     @getById.NotFoundError= class GetByIdNotFoundError extends Error
-    constructor: (message) ->
-        @message= message
+        constructor: (message) ->
+            @message= message
 
 
 
 
-    @getByName: (name, db) ->
+    @getByName: (name, db, done) ->
         dfd= do deferred
 
-        profile= null
         process.nextTick =>
+            try
+                if not name
+                    throw new @getByName.BadValueError 'name cannot be null'
 
-            err= null
-            if not name
-                return dfd.reject err= Error 'name cannot be null'
+                db.query """
+                    SELECT
 
-            db.query """
-                SELECT
+                        Profile.*,
 
-                    Profile.*,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',ProfileEmail.id,',',
+                            '"value":"',ProfileEmail.value,'",',
+                            '"verified":',IF((ProfileEmail.verifiedAt IS NOT NULL),1,0),
+                        '}') ORDER BY
+                            (ProfileEmail.verifiedAt IS NOT NULL) DESC,
+                            ProfileEmail.id
+                        ),']'), '[]') as emailsJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',ProfileEmail.id,',',
-                        '"value":"',ProfileEmail.value,'",',
-                        '"verified":',IF((ProfileEmail.verifiedAt IS NOT NULL),1,0),
-                    '}') ORDER BY
-                        (ProfileEmail.verifiedAt IS NOT NULL) DESC,
-                        ProfileEmail.id
-                    ),']'), '[]') as emailsJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',ProfilePhone.id,',',
+                            '"value":"',ProfilePhone.value,'",',
+                            '"verified":',IF((ProfilePhone.verifiedAt IS NOT NULL),1,0),
+                        '}') ORDER BY
+                            (ProfilePhone.verifiedAt IS NOT NULL) DESC,
+                            ProfilePhone.id
+                        ),']'), '[]') as phonesJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',ProfilePhone.id,',',
-                        '"value":"',ProfilePhone.value,'",',
-                        '"verified":',IF((ProfilePhone.verifiedAt IS NOT NULL),1,0),
-                    '}') ORDER BY
-                        (ProfilePhone.verifiedAt IS NOT NULL) DESC,
-                        ProfilePhone.id
-                    ),']'), '[]') as phonesJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',Account.id,',',
+                            '"type":"',Account.type,'",',
+                            '"name":"',Account.name,'",',
+                            '"updatedAt":"',Account.updatedAt,'"',
+                        '}') ORDER BY
+                            (Account.type <=> 'local') DESC,
+                            Account.type
+                        ),']'), '[]') as accountsJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',Account.id,',',
-                        '"type":"',Account.type,'",',
-                        '"name":"',Account.name,'",',
-                        '"updatedAt":"',Account.updatedAt,'"',
-                    '}') ORDER BY
-                        (Account.type <=> 'local') DESC,
-                        Account.type
-                    ),']'), '[]') as accountsJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',ProfileGroup.groupId,',',
+                            '"name":"',ProfileGroupProfile.name,'",',
+                            '"priority":',ProfileGroup.priority,',',
+                            '"updatedAt":"',ProfileGroup.updatedAt,'"',
+                        '}') ORDER BY
+                            ProfileGroup.priority
+                        ),']'), '[]') as groupsJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',ProfileGroup.groupId,',',
-                        '"name":"',ProfileGroupProfile.name,'",',
-                        '"priority":',ProfileGroup.priority,',',
-                        '"updatedAt":"',ProfileGroup.updatedAt,'"',
-                    '}') ORDER BY
-                        ProfileGroup.priority
-                    ),']'), '[]') as groupsJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',Permission.id,',',
+                            '"name":"',Permission.name,'",',
+                            '"profileId":',ProfilePermission.profileId,',',
+                            '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
+                            '"value":',ProfilePermission.value,',',
+                            '"updatedAt":"',ProfilePermission.updatedAt,'"',
+                        '}') ORDER BY
+                            (Profile.id <=> ProfilePermission.profileId) DESC,
+                            ProfileGroup.priority,
+                            Permission.name,
+                            ProfilePermission.value
+                        ),']'), '[]') as permissionsJson
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',Permission.id,',',
-                        '"name":"',Permission.name,'",',
-                        '"profileId":',ProfilePermission.profileId,',',
-                        '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                        '"value":',ProfilePermission.value,',',
-                        '"updatedAt":"',ProfilePermission.updatedAt,'"',
-                    '}') ORDER BY
-                        (Profile.id <=> ProfilePermission.profileId) DESC,
-                        ProfileGroup.priority,
-                        Permission.name,
-                        ProfilePermission.value
-                    ),']'), '[]') as permissionsJson
+                      FROM ??
+                        as Profile
 
-                  FROM ??
-                    as Profile
+                      LEFT JOIN ??
+                        as ProfileEmail
+                        ON ProfileEmail.profileId = Profile.id
 
-                  LEFT JOIN ??
-                    as ProfileEmail
-                    ON ProfileEmail.profileId = Profile.id
+                      LEFT JOIN ??
+                        as ProfilePhone
+                        ON ProfilePhone.profileId = Profile.id
 
-                  LEFT JOIN ??
-                    as ProfilePhone
-                    ON ProfilePhone.profileId = Profile.id
+                      LEFT JOIN ??
+                        as Account
+                        ON Account.profileId = Profile.id
+                        AND Account.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as Account
-                    ON Account.profileId = Profile.id
-                    AND Account.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as ProfileGroup
+                        ON ProfileGroup.profileId = Profile.id
+                        AND ProfileGroup.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as ProfileGroup
-                    ON ProfileGroup.profileId = Profile.id
-                    AND ProfileGroup.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as ProfileGroupProfile
+                        ON ProfileGroupProfile.id = ProfileGroup.groupId
+                        AND ProfileGroupProfile.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as ProfileGroupProfile
-                    ON ProfileGroupProfile.id = ProfileGroup.groupId
-                    AND ProfileGroupProfile.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as ProfilePermission
+                        ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
+                        AND ProfilePermission.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as ProfilePermission
-                    ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
-                    AND ProfilePermission.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as Permission
+                        ON Permission.id = ProfilePermission.permissionId
+                        AND Permission.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as Permission
-                    ON Permission.id = ProfilePermission.permissionId
-                    AND Permission.enabledAt <= NOW()
+                     WHERE
+                        Profile.name= ?
+                        AND
+                        Profile.enabledAt <= NOW()
+                    """
+                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, name]
+                ,   (err, rows) =>
+                        if err
+                            throw new Error err
 
-                 WHERE
-                    Profile.name= ?
-                    AND
-                    Profile.enabledAt <= NOW()
-                """
-            ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, name]
-            ,   (err, rows) =>
+                        if rows.length == 0
+                            throw new getByName.NotFoundError 'not found'
 
-                    if not err
-                        if rows.length
                             row= rows.shift()
                             if row.id
                                 profile= new @ row
                             dfd.resolve profile
-                    else
-                        dfd.reject err
+
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
+
+            catch
+                if done instanceof Function
+                    process.nextTick ->
+                        done err, data
+                dfd.reject err
 
         dfd.promise
+
+    @getByName.BadValueError= class GetByIdBadValueError extends Error
+        constructor: (message) ->
+            @message= message
+
+    @getByName.NotFoundError= class GetByIdNotFoundError extends Error
+        constructor: (message) ->
+            @message= message
 
 
 
@@ -474,12 +504,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         process.nextTick =>
             try
 
-                err= null
-
                 if not data
-                    err= new @create.BadValueError 'data cannot be null'
+                    throw new @create.BadValueError 'data cannot be null'
 
-                if err then throw err
 
                 data= new @ data
                 data.type= 'user'
@@ -557,16 +584,23 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, data.name,'user',data.title, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission]
                 ,   (err, res) =>
-                        if not err
-                            if res[0].affectedRows == 1 and res[1].length == 1
-                                data= new @ res[1][0]
-                                dfd.resolve data
-                            else
-                                err= Error 'profile not created'
+                        if err
+                            throw new Error err
+
+                        if res[0].affectedRows == 1 and res[1].length == 1
+                            data= new @ res[1][0]
+                            dfd.resolve data
                         else
-                            dfd.reject err
+                            throw new Error 'profile not created'
+
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
 
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err, data
                 dfd.reject err
 
         dfd.promise
@@ -583,12 +617,11 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         dfd= do deferred
         try
 
-            err= null
+            if not id
+                throw new @createEmails.BadValueError 'id cannot be null'
+            if not data
+                throw new @createEmails.BadValueError 'data cannot be null'
 
-            if not id then err= new @createEmails.BadValueError 'id cannot be null'
-            if not data then err= new @createEmails.BadValueError 'data cannot be null'
-
-            if err then throw err
 
             bulk= []
             for email in data
@@ -628,14 +661,14 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@tableEmail, bulk, @tableEmail, id]
                 ,   (err, res) =>
-                        if not err
-                            if res[0].affectedRows == bulk.length and res[1].length == 1
-                                data= new @ res[1][0]
-                                dfd.resolve data.emails
-                            else
-                                dfd.reject Error 'profile emails not created'
+                        if err
+                            throw new Error err
+
+                        if res[0].affectedRows == bulk.length and res[1].length == 1
+                            data= new @ res[1][0]
+                            dfd.resolve data.emails
                         else
-                            dfd.reject err
+                            throw new Error 'profile emails not created'
 
                         if done instanceof Function
                             process.nextTick ->
@@ -661,12 +694,11 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         dfd= do deferred
         try
 
-            err= null
+            if not id
+                throw new @createPhones.BadValueError 'id cannot be null'
+            if not data
+                throw new @createPhones.BadValueError 'data cannot be null'
 
-            if not id then err= new @createPhones.BadValueError 'id cannot be null'
-            if not data then err= new @createPhones.BadValueError 'data cannot be null'
-
-            if err then throw err
 
             bulk= []
             for phone in data
@@ -706,14 +738,14 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@tablePhone, bulk, @tablePhone, id]
                 ,   (err, res) =>
-                        if not err
-                            if res[0].affectedRows == bulk.length and res[1].length == 1
-                                data= new @ res[1][0]
-                                dfd.resolve data.phones
-                            else
-                                dfd.reject Error 'profile phones not created'
+                        if err
+                            throw new Error err
+
+                        if res[0].affectedRows == bulk.length and res[1].length == 1
+                            data= new @ res[1][0]
+                            dfd.resolve data.phones
                         else
-                            dfd.reject err
+                            throw new Error 'profile phones not created'
 
                         if done instanceof Function
                             process.nextTick ->
@@ -741,16 +773,14 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         process.nextTick =>
             try
 
-                err= null
                 if not id
-                    err= Error 'id cannot be null'
+                    throw new Error 'id cannot be null'
 
                 if not data
-                    err= Error 'data cannot be null'
+                    throw new Error 'data cannot be null'
+
 
                 data= new @ data
-
-                if err then throw err
 
                 db.query """
                     UPDATE
@@ -825,6 +855,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, data.title, id, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
                 ,   (err, res) =>
+                        if err
+                            throw new Error err
 
                         log 'SELECT AFTER UPDATE', err, res
 
@@ -832,9 +864,16 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             data= new @ res[1][0]
                             dfd.resolve data
                         else
-                            dfd.reject err
+                            throw new Error 'profile does not updated'
+
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
 
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -843,19 +882,17 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @updateEmails: (profile, data, db) ->
+    @updateEmails: (profile, data, db, done) ->
         dfd= do deferred
 
         process.nextTick =>
             try
 
-                err= null
                 if not profile or not profile.id
-                    err= Error 'profile id cannot be null'
+                    throw new @updateEmails.BadValueError 'profile id cannot be null'
                 if not data
-                    err= Error 'data cannot be null'
+                    throw new @updateEmails.BadValueError 'data cannot be null'
 
-                if err then throw err
 
                 step= 0
 
@@ -956,21 +993,32 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                 db.query query, queryParams
                 ,   (err, res) =>
+                        if err
+                            throw new Error err
 
-                        if not err
-                            if step then data= res[step][0] else data= res[0]
-                            if data
-                                data= new @ data
-                                dfd.resolve data.emails
-                            else
-                                dfd.resolve []
+
+                        if step then data= res[step][0] else data= res[0]
+                        if data
+                            data= new @ data
+                            dfd.resolve data.emails
                         else
-                            dfd.reject err
+                            dfd.resolve []
+
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
 
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
+
+    @updateEmails.BadValueError= class CreatePhonesBadValueError extends CreateBadValueError
+        constructor: (message) ->
+            @message= message
 
 
 
@@ -982,13 +1030,10 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         process.nextTick =>
             try
 
-                err= null
                 if not profile or not profile.id
-                    err= Error 'profile id cannot be null'
+                    throw new Error 'profile id cannot be null'
                 if not data
-                    err= Error 'data cannot be null'
-
-                if err then throw err
+                    throw new Error 'data cannot be null'
 
                 step= 0
 
@@ -1089,18 +1134,24 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                 db.query query, queryParams
                 ,   (err, res) =>
+                        if err
+                            throw new Error err
 
-                        if not err
-                            if step then data= res[step][0] else data= res[0]
-                            if data
-                                data= new @ data
-                                dfd.resolve data.phones
-                            else
-                                dfd.resolve []
+                        if step then data= res[step][0] else data= res[0]
+                        if data
+                            data= new @ data
+                            dfd.resolve data.phones
                         else
-                            dfd.reject err
+                            dfd.resolve []
+
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
 
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -1113,15 +1164,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         dfd= do deferred
         try
 
-            err= null
             if not id
-                err= new @delete.BadValueError 'id cannot be null'
+                throw new @delete.BadValueError 'id cannot be null'
 
-            if err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
-                return dfd.reject err
 
             db.query """
                 DELETE
@@ -1133,20 +1178,24 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 """
             ,   [@table, id]
             ,   (err, res) =>
+                    if err
+                        throw new Error err
 
-                    if not err
-                        if res.affectedRows == 1
-                            dfd.resolve true
-                        else
-                            dfd.reject err= new @delete.NotFoundError 'not deleted'
+
+                    if res.affectedRows == 1
+                        dfd.resolve true
                     else
-                        dfd.reject err
+                        throw new @delete.NotFoundError 'not deleted'
+
 
                     if done instanceof Function
                         process.nextTick ->
                             done err, data
 
         catch err
+            if done instanceof Function
+                process.nextTick ->
+                    done err
             dfd.reject err
 
         dfd.promise
@@ -1167,17 +1216,11 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         dfd= do deferred
         try
 
-            err= null
             if not id
-                err= new @enable.BadValueError 'id cannot be null'
+                throw new @enable.BadValueError 'id cannot be null'
+
 
             enabled= enabled|0
-
-            if err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
-                return dfd.reject err
 
             db.query """
                 UPDATE
@@ -1196,21 +1239,23 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 """
             ,   [@table, enabled, id, @table, id]
             ,   (err, res) =>
+                    if err
+                        throw new Error err
 
-                    if not err
-                        enabledAt= res[1][0].enabledAt
-                        enabled= !!enabledAt
-                        dfd.resolve
-                            enabledAt: enabledAt
-                            enabled: enabled
-                    else
-                        dfd.reject err
+                    enabledAt= res[1][0].enabledAt
+                    enabled= !!enabledAt
+                    dfd.resolve
+                        enabledAt: enabledAt
+                        enabled: enabled
 
                     if done instanceof Function
                         process.nextTick ->
                             done err, state
 
         catch err
+            if done instanceof Function
+                process.nextTick ->
+                    done err
             dfd.reject err
 
         dfd.promise
@@ -1231,17 +1276,11 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
         dfd= do deferred
         try
 
-            err= null
             if not emailId
-                err= new @enableEmail.BadValueError 'emailId cannot be null'
+                throw new @enableEmail.BadValueError 'emailId cannot be null'
+
 
             enabled= enabled|0
-
-            if err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
-                return dfd.reject err
 
             db.query """
                 UPDATE
@@ -1260,21 +1299,23 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 """
             ,   [@tableEmail, enabled, emailId, @tableEmail, emailId]
             ,   (err, res) =>
+                    if err
+                        throw new Error err
 
-                if not err
                     enabledAt= res[1][0].enabledAt
                     enabled= !!enabledAt
                     dfd.resolve
                         enabledAt: enabledAt
                         enabled: enabled
-                else
-                    dfd.reject err
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, state
+                    if done instanceof Function
+                        process.nextTick ->
+                            done err, state
 
         catch err
+            if done instanceof Function
+                process.nextTick ->
+                    done err
             dfd.reject err
 
         dfd.promise
@@ -1286,8 +1327,3 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
     @enableEmail.NotFoundError= class EnableNotFoundError extends Error
         constructor: (message) ->
             @message= message
-
-
-
-
-
