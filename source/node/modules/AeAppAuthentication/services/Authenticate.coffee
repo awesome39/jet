@@ -11,7 +11,7 @@ module.exports= (Profile, log) -> class AuthenticateService
 
 
 
-        authenticate= () ->
+        authenticate= (who) ->
             log do process.hrtime, 'Created middleware.'
 
             (req, res, next) ->
@@ -21,6 +21,11 @@ module.exports= (Profile, log) -> class AuthenticateService
                 hrtime= do process.hrtime
                 req.time=
                     start: (hrtime[0] * 1e9 + hrtime[1])
+
+
+                if !who and !req.isAuthenticated()
+                    next 'not authenticated'
+
 
                 if req.isAuthenticated()
                     profileId= req.account.profileId or 1

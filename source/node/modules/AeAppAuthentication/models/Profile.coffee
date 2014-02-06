@@ -1202,3 +1202,67 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
     @enable.NotFoundError= class EnableNotFoundError extends Error
         constructor: (message) ->
             @message= message
+
+
+
+
+
+    @enableEmail: (emailId, enabled, db, done) ->
+        dfd= do deferred
+        try
+
+            err= null
+            if not emailId
+                err= new @enableEmail.BadValueError 'emailId cannot be null'
+
+            enabled= enabled|0
+
+            if err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
+                return dfd.reject err
+
+            db.query """
+                UPDATE
+                    ??
+                   SET
+                    enabledAt= IF(?, IF(enabledAt, enabledAt, NOW()), NULL)
+                 WHERE
+                    emailId= ?
+                ;
+                SELECT
+                    enabledAt
+                  FROM
+                    ??
+                 WHERE
+                    emailId= ?
+                """
+            ,   [@tableEmail, enabled, emailId, @tableEmail, emailId]
+            ,   (err, res) =>
+
+                if not err
+                    enabledAt= res[1][0].enabledAt
+                    enabled= !!enabledAt
+                    dfd.resolve
+                        enabledAt: enabledAt
+                        enabled: enabled
+                else
+                    dfd.reject err
+
+                if done instanceof Function
+                    process.nextTick ->
+                        done err, state
+
+        catch err
+            dfd.reject err
+
+        dfd.promise
+
+    @enableEmail.BadValueError= class EnableBadValueError extends Error
+        constructor: (message) ->
+            @message= message
+
+    @enableEmail.NotFoundError= class EnableNotFoundError extends Error
+        constructor: (message) ->
+            @message= message
