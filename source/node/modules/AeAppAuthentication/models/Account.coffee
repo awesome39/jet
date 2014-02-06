@@ -268,23 +268,27 @@ module.exports= (log) -> class Account
                 ,   (err, res) =>
                         if err
                             throw new Error err
+
+                        if res[0].affectedRows == 1 and res[1].length == 1
+                            data= new @ res[1][0]
+                            dfd.resolve data
                         else
-                            if res[0].affectedRows == 1 and res[1].length == 1
-                                data= new @ res[1][0]
-                                dfd.resolve data
-                            else
-                                throw new Error 'account not updated'
+                            throw new Error 'account not updated'
 
             catch err
                 dfd.reject err
 
         dfd.promise
 
+    @update.BadValueError= class UpdateBadValueError extends Error
+        constructor: (message) ->
+            @message= message
 
 
 
 
-    @update: (id, db, done) ->
+
+    @delete: (id, db, done) ->
         dfd= do deferred
 
         process.nextTick =>

@@ -144,19 +144,21 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, 'user']
                 ,   (err, rows) =>
-                        if not err
-                            profiles= []
-                            if rows.length
-                                for row in rows
-                                    profiles.push new @ row
-                            dfd.resolve profiles
-                        else
-                            dfd.reject err
+                        if err
+                            throw new Error err
+
+                        profiles= []
+                        if rows.length
+                            for row in rows
+                                profiles.push new @ row
+                        dfd.resolve profiles
 
             catch err
                 dfd.reject err
 
         dfd.promise
+
+
 
 
 
@@ -170,15 +172,17 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 data= JSON.stringify profile
 
                 db.client.set key, data, (err, reply) ->
-                    if not err
-                        dfd.resolve profile
-                    else
-                        dfd.reject err
+                    if err
+                        throw new Error err
+
+                    dfd.resolve profile
 
             catch err
                 dfd.reject err
 
         dfd.promise
+
+
 
 
 
@@ -191,10 +195,10 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 key= ['profile',id].join ':'
 
                 db.client.get key, (err, data) ->
-                    if not err
-                        dfd.resolve if data then JSON.parse data else null
-                    else
-                        dfd.reject err
+                    if err
+                        throw new Error err
+
+                    dfd.resolve if data then JSON.parse data else null
 
             catch err
                 dfd.reject err
@@ -203,127 +207,139 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
+
+
     @getById: (id, db) ->
         dfd= do deferred
 
         profile= null
         process.nextTick =>
+            try
 
-            err= null
-            if not id
-                return dfd.reject err= Error 'id cannot be null'
+                if not id
+                    throw new @getById.BadValueError 'id cannot be null'
 
-            db.query """
-                SELECT
+                db.query """
+                    SELECT
 
-                    Profile.*,
+                        Profile.*,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',ProfileEmail.id,',',
-                        '"value":"',ProfileEmail.value,'",',
-                        '"verified":',IF((ProfileEmail.verifiedAt IS NOT NULL),1,0),
-                    '}') ORDER BY
-                        (ProfileEmail.verifiedAt IS NOT NULL) DESC,
-                        ProfileEmail.id
-                    ),']'), '[]') as emailsJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',ProfileEmail.id,',',
+                            '"value":"',ProfileEmail.value,'",',
+                            '"verified":',IF((ProfileEmail.verifiedAt IS NOT NULL),1,0),
+                        '}') ORDER BY
+                            (ProfileEmail.verifiedAt IS NOT NULL) DESC,
+                            ProfileEmail.id
+                        ),']'), '[]') as emailsJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',ProfilePhone.id,',',
-                        '"value":"',ProfilePhone.value,'",',
-                        '"verified":',IF((ProfilePhone.verifiedAt IS NOT NULL),1,0),
-                    '}') ORDER BY
-                        (ProfilePhone.verifiedAt IS NOT NULL) DESC,
-                        ProfilePhone.id
-                    ),']'), '[]') as phonesJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',ProfilePhone.id,',',
+                            '"value":"',ProfilePhone.value,'",',
+                            '"verified":',IF((ProfilePhone.verifiedAt IS NOT NULL),1,0),
+                        '}') ORDER BY
+                            (ProfilePhone.verifiedAt IS NOT NULL) DESC,
+                            ProfilePhone.id
+                        ),']'), '[]') as phonesJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',Account.id,',',
-                        '"type":"',Account.type,'",',
-                        '"name":"',Account.name,'",',
-                        '"updatedAt":"',Account.updatedAt,'"',
-                    '}') ORDER BY
-                        (Account.type <=> 'local') DESC,
-                        Account.type
-                    ),']'), '[]') as accountsJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',Account.id,',',
+                            '"type":"',Account.type,'",',
+                            '"name":"',Account.name,'",',
+                            '"updatedAt":"',Account.updatedAt,'"',
+                        '}') ORDER BY
+                            (Account.type <=> 'local') DESC,
+                            Account.type
+                        ),']'), '[]') as accountsJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',ProfileGroup.groupId,',',
-                        '"name":"',ProfileGroupProfile.name,'",',
-                        '"priority":',ProfileGroup.priority,',',
-                        '"updatedAt":"',ProfileGroup.updatedAt,'"',
-                    '}') ORDER BY
-                        ProfileGroup.priority
-                    ),']'), '[]') as groupsJson,
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',ProfileGroup.groupId,',',
+                            '"name":"',ProfileGroupProfile.name,'",',
+                            '"priority":',ProfileGroup.priority,',',
+                            '"updatedAt":"',ProfileGroup.updatedAt,'"',
+                        '}') ORDER BY
+                            ProfileGroup.priority
+                        ),']'), '[]') as groupsJson,
 
-                    IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                        '"id":',Permission.id,',',
-                        '"name":"',Permission.name,'",',
-                        '"profileId":',ProfilePermission.profileId,',',
-                        '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
-                        '"value":',ProfilePermission.value,',',
-                        '"updatedAt":"',ProfilePermission.updatedAt,'"',
-                    '}') ORDER BY
-                        (Profile.id <=> ProfilePermission.profileId) DESC,
-                        ProfileGroup.priority,
-                        Permission.name,
-                        ProfilePermission.value
-                    ),']'), '[]') as permissionsJson
+                        IFNULL(CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',Permission.id,',',
+                            '"name":"',Permission.name,'",',
+                            '"profileId":',ProfilePermission.profileId,',',
+                            '"priority":',IF(Profile.id<=>ProfilePermission.profileId,0,ProfileGroup.priority),',',
+                            '"value":',ProfilePermission.value,',',
+                            '"updatedAt":"',ProfilePermission.updatedAt,'"',
+                        '}') ORDER BY
+                            (Profile.id <=> ProfilePermission.profileId) DESC,
+                            ProfileGroup.priority,
+                            Permission.name,
+                            ProfilePermission.value
+                        ),']'), '[]') as permissionsJson
 
-                  FROM ??
-                    as Profile
+                      FROM ??
+                        as Profile
 
-                  LEFT JOIN ??
-                    as ProfileEmail
-                    ON ProfileEmail.profileId = Profile.id
+                      LEFT JOIN ??
+                        as ProfileEmail
+                        ON ProfileEmail.profileId = Profile.id
 
-                  LEFT JOIN ??
-                    as ProfilePhone
-                    ON ProfilePhone.profileId = Profile.id
+                      LEFT JOIN ??
+                        as ProfilePhone
+                        ON ProfilePhone.profileId = Profile.id
 
-                  LEFT JOIN ??
-                    as Account
-                    ON Account.profileId = Profile.id
-                    AND Account.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as Account
+                        ON Account.profileId = Profile.id
+                        AND Account.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as ProfileGroup
-                    ON ProfileGroup.profileId = Profile.id
-                    AND ProfileGroup.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as ProfileGroup
+                        ON ProfileGroup.profileId = Profile.id
+                        AND ProfileGroup.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as ProfileGroupProfile
-                    ON ProfileGroupProfile.id = ProfileGroup.groupId
-                    AND ProfileGroupProfile.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as ProfileGroupProfile
+                        ON ProfileGroupProfile.id = ProfileGroup.groupId
+                        AND ProfileGroupProfile.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as ProfilePermission
-                    ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
-                    AND ProfilePermission.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as ProfilePermission
+                        ON ProfilePermission.profileId = Profile.id OR ProfilePermission.profileId= ProfileGroup.groupId
+                        AND ProfilePermission.enabledAt <= NOW()
 
-                  LEFT JOIN ??
-                    as Permission
-                    ON Permission.id = ProfilePermission.permissionId
-                    AND Permission.enabledAt <= NOW()
+                      LEFT JOIN ??
+                        as Permission
+                        ON Permission.id = ProfilePermission.permissionId
+                        AND Permission.enabledAt <= NOW()
 
-                 WHERE
-                    Profile.id= ?
-                    AND
-                    Profile.enabledAt <= NOW()
-                """
-            ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
-            ,   (err, rows) =>
+                     WHERE
+                        Profile.id= ?
+                        AND
+                        Profile.enabledAt <= NOW()
+                    """
+                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
+                ,   (err, rows) =>
 
-                    if not err and rows.length and not rows[0].id
-                        err= Error 'profile not found'
+                        if not err and rows.length and not rows[0].id
+                            err= Error 'profile not found'
 
-                    if not err
-                        if rows.length
-                            profile= new @ rows.shift()
-                        dfd.resolve profile
-                    else
-                        dfd.reject err
-
+                        if not err
+                            if rows.length
+                                profile= new @ rows.shift()
+                            dfd.resolve profile
+                        else
+                            dfd.reject err
+            catch err
+                dfd.reject err
         dfd.promise
+
+    @getById.BadValueError= class GetByIdBadValueError extends Error
+    constructor: (message) ->
+        @message= message
+
+    @getById.NotFoundError= class GetByIdNotFoundError extends Error
+    constructor: (message) ->
+        @message= message
+
 
 
 
@@ -561,6 +577,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
+
+
     @createEmails: (id, data, db, done) ->
         dfd= do deferred
         try
@@ -637,6 +655,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
+
+
     @createPhones: (id, data, db, done) ->
         dfd= do deferred
         try
@@ -710,6 +730,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
     @createPhones.BadValueError= class CreatePhonesBadValueError extends CreateBadValueError
         constructor: (message) ->
             @message= message
+
+
 
 
 
@@ -816,6 +838,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 dfd.reject err
 
         dfd.promise
+
+
 
 
 
@@ -947,6 +971,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 dfd.reject err
 
         dfd.promise
+
+
 
 
 
@@ -1083,9 +1109,6 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    ###
-    Удаляет указанный профиль.
-    ###
     @delete: (id, db, done) ->
         dfd= do deferred
         try
@@ -1140,9 +1163,6 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    ###
-    Включает указанный профиль.
-    ###
     @enable: (id, enabled, db, done) ->
         dfd= do deferred
         try
@@ -1266,3 +1286,8 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
     @enableEmail.NotFoundError= class EnableNotFoundError extends Error
         constructor: (message) ->
             @message= message
+
+
+
+
+
