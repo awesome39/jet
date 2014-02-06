@@ -17,7 +17,11 @@ module.exports= (log) -> class Account
         @id= data.id
         @profileId= data.profileId
         @name= data.name
+        @type= data.type
         @pass= data.pass
+
+        @enabledAt= data.enabledAt
+        @updatedAt= data.updatedAt
 
 
 
@@ -31,45 +35,43 @@ module.exports= (log) -> class Account
 
 
 
-    @auth: (account, db, done) ->
+    @auth: (data, db, done) ->
         dfd= do deferred
 
-        err= null
-        if not account
-            err= Error 'account cannot be null'
-        if not account.name or not account.pass
-            err= Error 'account credentials cannot be null'
+        process.nextTick =>
+            try
+                if not data
+                    throw new Error 'account cannot be null'
 
-        if err
-            if done
-                process.nextTick ->
-                    done err, account
-            return dfd.reject err
+                data= @ data
 
-        db.query "
-            SELECT
-                Account.*
-              FROM
-                ?? as Account
-             WHERE
-                Account.name= ?
-               AND
-                Account.pass= ?
-            "
-        ,   [@table, account.name, account.pass]
-        ,   (err, rows) =>
-                account= null
+                if not data.name or not data.pass
+                    throw new Error 'account credentials cannot be null'
 
-                if not err
-                    if rows.length
-                        account= new @ rows.shift()
-                    dfd.resolve account
-                else
-                    dfd.reject err
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, account
+                db.query """
+                    SELECT
+                        Account.*
+                    FROM
+                        ?? as Account
+                    WHERE
+                        Account.name= ?
+                        AND
+                        Account.pass= ?
+                    """
+                ,   [@table, account.name, account.pass]
+                ,   (err, rows) =>
+                        if err
+                            throw new Error err
+
+
+                        account= null
+                        if rows.length
+                            account= new @ rows.shift()
+                        dfd.resolve account
+
+            catch err
+                dfd.reject err
 
         dfd.promise
 
@@ -100,26 +102,28 @@ module.exports= (log) -> class Account
                         name= ?,
                         pass= ?
                     ;
-
                     SELECT
-                        Account.*
-
+                        Account.id,
+                        Account.profileId,
+                        Account.type,
+                        Account.name,
+                        Account.enabledAt,
+                        Account.updatedAt
                     FROM
                         ?? AS Account
-
                     WHERE
                         Account.id= LAST_INSERT_ID()
                     """
                 ,   [@table, profileId, data.name, data.pass, @table]
                 ,   (err, res) =>
-                        if not err
+                        if err
+                            throw new Error err
+                        else
                             if res[0].affectedRows == 1 and res[1].length == 1
                                 data= new @ res[1][0]
                                 dfd.resolve data
                             else
                                 throw new Error 'account not created'
-                        else
-                            dfd.reject err
 
             catch err
                 dfd.reject err
@@ -135,29 +139,46 @@ module.exports= (log) -> class Account
 
 
     @query: (query, db, done) ->
-        accounts= []
-
         dfd= do deferred
 
-        setTimeout =>
+        process.nextTick =>
+            try
 
-            dfd.resolve accounts
-            if done instanceof Function
-                process.nextTick ->
-                    done null, accounts
+                db.query """
+                    SELECT
+                        Account.id,
+                        Account.profileId,
+                        Account.type,
+                        Account.name,
+                        Account.enabledAt,
+                        Account.updatedAt
+                    FROM
+                        ?? AS Account
+                    """
+                ,   [@table]
+                ,   (err, rows) =>
+                        if err
+                            throw new Error err
 
-        ,   1023
+                        accounts= []
+                        if rows.length
+                            for row in rows
+                                accounts.push new @ row
+                        dfd.resolve accounts
+
+            catch err
+                dfd.reject err
 
         dfd.promise
 
 
 
-    @get: (id, db, done) ->
+
+
+    @getById: (id, db, done) ->
         dfd= do deferred
 
-        account= null
         process.nextTick =>
-
             try
                 if not id
                     throw new @get.BadValueError 'id cannot be null'
@@ -165,19 +186,21 @@ module.exports= (log) -> class Account
 
                 db.query """
                     SELECT
-                        Account.*
-
+                        Account.id,
+                        Account.profileId,
+                        Account.type,
+                        Account.name,
+                        Account.enabledAt,
+                        Account.updatedAt
                     FROM
                         ?? AS Account
-
                     WHERE
                         Account.id = ?
                     """
                 ,   [@table, id]
                 ,   (err, rows) =>
-
                         if not err and rows.length == 0
-                            throw new @get.NotFoundError 'account not found'
+                            throw new @getById.NotFoundError 'account not found'
 
                         if err
                             throw new Error err
@@ -190,11 +213,11 @@ module.exports= (log) -> class Account
 
         dfd.promise
 
-    @get.BadValueError= class GetByIdBadValueError extends Error
+    @getById.BadValueError= class GetByIdBadValueError extends Error
         constructor: (message) ->
             @message= message
 
-    @get.NotFoundError= class GetByIdNotFoundError extends Error
+    @getById.NotFoundError= class GetByIdNotFoundError extends Error
         constructor: (message) ->
             @message= message
 
@@ -205,48 +228,165 @@ module.exports= (log) -> class Account
     @update: (id, data, db, done) ->
         dfd= do deferred
 
-        err= null
-        if not id
-            err= Error 'id cannot be null'
+        process.nextTick =>
+            try
 
-        if not data
-            err= Error 'data cannot be null'
+                if not id
+                    throw new @update.BadValueError 'id cannot be null'
 
-        oldPass= @sha1 data.oldPass
-        data= @filterDataForUpdate data
+                if not data
+                    throw new @update.BadValueError 'data cannot be null'
 
-        if err
-            dfd.reject err
-            if done and err
-                process.nextTick ->
-                    done err
-        if not err
-            db.query "
-                UPDATE
-                    ??
-                   SET
-                    ?
-                 WHERE
-                    id= ?
-                   AND
-                    pass= ?
-                "
-            ,   [@table, data, id, oldPass]
-            ,   (err, res) =>
 
-                    if not err
-                        if res.affectedRows == 1
-                            dfd.resolve data
+                oldPass= @sha1 data.oldPass
+                data= new @ data
+                data.pass= @sha1 data.pass
+
+                db.query """
+                    UPDATE
+                        ??
+                    SET
+                        ?
+                    WHERE
+                        id= ?
+                        AND
+                        pass= ?
+                    ;
+                    SELECT
+                        Account.id,
+                        Account.profileId,
+                        Account.type,
+                        Account.name,
+                        Account.enabledAt,
+                        Account.updatedAt
+                    FROM
+                        ?? AS Account
+                    WHERE
+                        Account.id= ?
+                    """
+                ,   [@table, data, id, oldPass, @table, id]
+                ,   (err, res) =>
+                        if err
+                            throw new Error err
                         else
-                            dfd.reject err
-                    else
-                        dfd.reject err
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                data= new @ res[1][0]
+                                dfd.resolve data
+                            else
+                                throw new Error 'account not updated'
 
-                    if done instanceof Function
-                        process.nextTick ->
-                            done err, data
+            catch err
+                dfd.reject err
 
         dfd.promise
+
+
+
+
+
+    @update: (id, db, done) ->
+        dfd= do deferred
+
+        process.nextTick =>
+            try
+
+                if not id
+                    throw new @delete.BadValueError 'id cannot be null'
+
+
+                db.query """
+                    DELETE
+                    FROM
+                        ??
+                    WHERE
+                        id= ?
+                    """
+                ,   [@table, id]
+                ,   (err, res) =>
+                    if err
+                        throw new Error err
+                    if res.length == 0
+                        throw new @delete.NotFoundError 'not found'
+
+
+                    if res[0].affectedRows == 1
+                        dfd.resolve true
+                    else
+                        throw new Error 'account not deleted'
+
+            catch err
+                dfd.reject err
+
+        dfd.promise
+
+    @delete.BadValueError= class DeleteBadValueError extends Error
+        constructor: (message) ->
+            @message= message
+
+    @delete.NotFoundError= class DeleteNotFoundError extends Error
+        constructor: (message) ->
+            @message= message
+
+
+
+
+
+    @enable: (id, enabled, db, done) ->
+        dfd= do deferred
+
+        process.nextTick =>
+            try
+
+                if not id
+                    throw new @enable.BadValueError 'id cannot be null'
+
+
+                enabled= enabled|0
+
+                db.query """
+                    UPDATE
+                        ??
+                    SET
+                        enabledAt= IF(?, IF(enabledAt, enabledAt, NOW()), NULL)
+                    WHERE
+                        id= ?
+                    ;
+                    SELECT
+                        enabledAt
+                    FROM
+                        ??
+                    WHERE
+                        id= ?
+                    """
+                ,   [@table, enabled, id, @table, id]
+                ,   (err, res) =>
+                        if err
+                            throw new Error err
+                        if res.length == 0
+                            throw new @enable.NotFoundError 'not found'
+
+                        enabledAt= res[1][0].enabledAt
+                        enabled= !!enabledAt
+                        dfd.resolve
+                            enabledAt: enabledAt
+                            enabled: enabled
+
+            catch err
+                dfd.reject err
+
+        dfd.promise
+
+    @enable.BadValueError= class EnableBadValueError extends Error
+        constructor: (message) ->
+            @message= message
+
+    @enable.NotFoundError= class EnableNotFoundError extends Error
+        constructor: (message) ->
+            @message= message
+
+
+
+
 
     @filterDataForUpdate: (data) ->
         data=
