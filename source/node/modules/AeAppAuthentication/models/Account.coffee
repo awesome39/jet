@@ -43,15 +43,18 @@ module.exports= (log) -> class Account
                 if not data
                     throw new Error 'account cannot be null'
 
-                data= @ data
-
                 if not data.name or not data.pass
                     throw new Error 'account credentials cannot be null'
 
 
                 db.query """
                     SELECT
-                        Account.*
+                        Account.id,
+                        Account.profileId,
+                        Account.name,
+                        Account.type,
+                        Account.enabledAt,
+                        Account.updatedAt
                     FROM
                         ?? as Account
                     WHERE
@@ -59,18 +62,25 @@ module.exports= (log) -> class Account
                         AND
                         Account.pass= ?
                     """
-                ,   [@table, account.name, account.pass]
+                ,   [@table, data.name, data.pass]
                 ,   (err, rows) =>
                         if err
                             throw new Error err
-
 
                         account= null
                         if rows.length
                             account= new @ rows.shift()
                         dfd.resolve account
 
+                        #TODO не верно вызывается done
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, account
+
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -118,14 +128,21 @@ module.exports= (log) -> class Account
                 ,   (err, res) =>
                         if err
                             throw new Error err
+
+                        if res[0].affectedRows == 1 and res[1].length == 1
+                            data= new @ res[1][0]
+                            dfd.resolve data
                         else
-                            if res[0].affectedRows == 1 and res[1].length == 1
-                                data= new @ res[1][0]
-                                dfd.resolve data
-                            else
-                                throw new Error 'account not created'
+                            throw new Error 'account not created'
+
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
 
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -166,7 +183,14 @@ module.exports= (log) -> class Account
                                 accounts.push new @ row
                         dfd.resolve accounts
 
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, accounts
+
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -208,7 +232,14 @@ module.exports= (log) -> class Account
                         account= new @ rows.shift()
                         dfd.resolve account
 
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, account
+
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -275,7 +306,14 @@ module.exports= (log) -> class Account
                         else
                             throw new Error 'account not updated'
 
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, data
+
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -307,18 +345,24 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, id]
                 ,   (err, res) =>
-                    if err
-                        throw new Error err
-                    if res.length == 0
-                        throw new @delete.NotFoundError 'not found'
+                        if err
+                            throw new Error err
+                        if res.length == 0
+                            throw new @delete.NotFoundError 'not found'
 
+                        if res[0].affectedRows == 1
+                            dfd.resolve true
+                        else
+                            throw new Error 'account not deleted'
 
-                    if res[0].affectedRows == 1
-                        dfd.resolve true
-                    else
-                        throw new Error 'account not deleted'
+                        if done instanceof Function
+                            process.nextTick ->
+                                done err, true
 
             catch err
+                if done instanceof Function
+                    process.nextTick ->
+                        done err
                 dfd.reject err
 
         dfd.promise
@@ -371,9 +415,15 @@ module.exports= (log) -> class Account
 
                         enabledAt= res[1][0].enabledAt
                         enabled= !!enabledAt
-                        dfd.resolve
+
+                        data=
                             enabledAt: enabledAt
                             enabled: enabled
+                        dfd.resolve data
+
+                    if done instanceof Function
+                        process.nextTick ->
+                            done err, data
 
             catch err
                 dfd.reject err

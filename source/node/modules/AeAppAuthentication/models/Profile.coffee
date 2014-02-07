@@ -469,10 +469,10 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         if rows.length == 0
                             throw new getByName.NotFoundError 'not found'
 
-                            row= rows.shift()
-                            if row.id
-                                profile= new @ row
-                            dfd.resolve profile
+                        row= rows.shift()
+                        if row.id
+                            profile= new @ row
+                        dfd.resolve profile
 
                         if done instanceof Function
                             process.nextTick ->
