@@ -89,6 +89,9 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
 
         @authUser: () -> (req, res, next) ->
             handler= $auth.authenticate 'local', (err, account) ->
+                if err
+                    return res.json 500, err
+
                 if not account
                     return res.json 400, account
                 account= Account.auth account, req.maria
