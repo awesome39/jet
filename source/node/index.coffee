@@ -30,8 +30,10 @@ module.exports= (manifest, env) ->
 
         app.use do App.compress
 
+        app.set 'view engine', 'jade'
 
 
+        ###
         app.use App.static "#{__dirname}/../pub/assets"
 
 
@@ -74,7 +76,7 @@ module.exports= (manifest, env) ->
 
 
         app.use App.static "#{__dirname}/../pub/templates/Manage"
-
+        ###
 
 
         app
