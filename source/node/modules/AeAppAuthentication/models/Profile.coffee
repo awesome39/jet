@@ -142,7 +142,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                      ORDER BY
                         Profile.updatedAt DESC
                     """
-                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, 'user']
+                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, 'user']
                 ,   (err, rows) =>
                         if err
                             throw new Error err
@@ -315,7 +315,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         AND
                         Profile.enabledAt <= NOW()
                     """
-                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
+                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, id]
                 ,   (err, rows) =>
                         if err
                             throw new Error err
@@ -349,6 +349,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
             try
                 if not name
                     throw new @getByName.BadValueError 'name cannot be null'
+
 
                 db.query """
                     SELECT
@@ -447,7 +448,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         AND
                         Profile.enabledAt <= NOW()
                     """
-                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, name]
+                ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, name]
                 ,   (err, rows) =>
                         if err
                             throw new Error err
@@ -460,7 +461,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             profile= new @ row
                         dfd.resolve profile
 
-            catch
+            catch err
                 dfd.reject err
 
         dfd.promise
@@ -561,7 +562,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                      WHERE
                         Profile.id= LAST_INSERT_ID()
                     """
-                ,   [@table, data.name,'user',data.title, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission]
+                ,   [@table, data.name,'user',data.title, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table]
                 ,   (err, res) =>
                         if err
                             throw new Error err
@@ -813,7 +814,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                      WHERE
                         Profile.id= ?
                     """
-                ,   [@table, data.title, id, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.tablePermission, id]
+                ,   [@table, data.title, id, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, id]
                 ,   (err, res) =>
                         if err
                             throw new Error err
