@@ -67,7 +67,7 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
                     WHERE
                         ProfilePermission.id= LAST_INSERT_ID()
                     """
-                ,   [@table, profileId, @Permission.tablePermission, name, @table]
+                ,   [@table, profileId, @Permission.table, name, @table]
                 ,   (err, res) =>
                         if err
                             throw new Error err
