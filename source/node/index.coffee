@@ -36,13 +36,12 @@ module.exports= (manifest, env) ->
 
 
 
-        app.set 'views', "#{__dirname}/views"
+        #app.set 'views', "#{__dirname}/views"
         app.set 'view engine', 'jade'
 
 
 
         app.enable 'strict routing'
-
 
 
         app.get '/', (req, res, next) ->
