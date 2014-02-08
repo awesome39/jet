@@ -264,12 +264,12 @@ module.exports= (ProfilePermission) -> class Group
         dfd.promise
 
     @delete.BadValueError= class DeleteBadValueError extends Error
-    constructor: (message) ->
-        @message= message
+        constructor: (message) ->
+            @message= message
 
     @delete.NotFoundError= class DeleteNotFoundError extends Error
-    constructor: (message) ->
-        @message= message
+        constructor: (message) ->
+            @message= message
 
 
 
