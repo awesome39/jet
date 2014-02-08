@@ -1,4 +1,4 @@
-module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $authenticate, $authorize, db, log) ->
+module.exports= (App, Account, ProfileSession, $audit, $auth, $authenticate, $authorize, db, log) ->
     class ProfileApi extends App
 
         constructor: () ->
@@ -114,7 +114,7 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
             handler req, res, next
 
 
-
+        ###
         @authUserGithub: () -> (req, res, next) ->
             handler= $auth.authenticate 'github', (err, account) ->
                 account= AccountGithub.auth account, req.maria
@@ -125,7 +125,7 @@ module.exports= (App, Account, AccountGithub, ProfileSession, $audit, $auth, $au
                         req.login account, (err) ->
                             next err
             handler req, res, next
-
+        ###
 
 
         @loadProfileSessions: (param) -> (req, res, next) ->
