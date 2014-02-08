@@ -35,7 +35,7 @@ module.exports= (log) -> class Account
 
 
 
-    @auth: (data, db, done) ->
+    @auth: (data, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -72,15 +72,7 @@ module.exports= (log) -> class Account
                             account= new @ rows.shift()
                         dfd.resolve account
 
-                        #TODO не верно вызывается done
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, account
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -89,7 +81,7 @@ module.exports= (log) -> class Account
 
 
 
-    @create: (profileId, data, db, done) ->
+    @create: (profileId, data, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -135,14 +127,7 @@ module.exports= (log) -> class Account
                         else
                             throw new Error 'account not created'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -155,7 +140,7 @@ module.exports= (log) -> class Account
 
 
 
-    @query: (query, db, done) ->
+    @query: (query, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -183,14 +168,7 @@ module.exports= (log) -> class Account
                                 accounts.push new @ row
                         dfd.resolve accounts
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, accounts
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -199,7 +177,7 @@ module.exports= (log) -> class Account
 
 
 
-    @getById: (id, db, done) ->
+    @getById: (id, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -232,14 +210,7 @@ module.exports= (log) -> class Account
                         account= new @ rows.shift()
                         dfd.resolve account
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, account
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -256,7 +227,7 @@ module.exports= (log) -> class Account
 
 
 
-    @update: (id, data, db, done) ->
+    @update: (id, data, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -306,14 +277,7 @@ module.exports= (log) -> class Account
                         else
                             throw new Error 'account not updated'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -326,7 +290,7 @@ module.exports= (log) -> class Account
 
 
 
-    @delete: (id, db, done) ->
+    @delete: (id, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -355,14 +319,7 @@ module.exports= (log) -> class Account
                         else
                             throw new Error 'account not deleted'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, true
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -379,7 +336,7 @@ module.exports= (log) -> class Account
 
 
 
-    @enable: (id, enabled, db, done) ->
+    @enable: (id, enabled, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -420,10 +377,6 @@ module.exports= (log) -> class Account
                             enabledAt: enabledAt
                             enabled: enabled
                         dfd.resolve data
-
-                    if done instanceof Function
-                        process.nextTick ->
-                            done err, data
 
             catch err
                 dfd.reject err

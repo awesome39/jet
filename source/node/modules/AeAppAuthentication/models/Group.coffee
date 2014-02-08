@@ -26,55 +26,54 @@ module.exports= (ProfilePermission) -> class Group
 
 
 
-    @query: (query, db, done) ->
-        profiles= null
-
+    @query: (query, db) ->
         dfd= do deferred
 
-        db.query """
-            SELECT
+        process.nextTick =>
+            try
+                db.query """
+                    SELECT
 
-                Profile.*,
+                        Profile.*,
 
-                CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
-                    '"id":',Permission.id,',',
-                    '"name":"',Permission.name,'",',
-                    '"value":',ProfilePermission.value,
-                '}') ORDER BY
-                    Permission.name,
-                    ProfilePermission.value
-                ),']') as permissionsJson
+                        CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{',
+                            '"id":',Permission.id,',',
+                            '"name":"',Permission.name,'",',
+                            '"value":',ProfilePermission.value,
+                        '}') ORDER BY
+                            Permission.name,
+                            ProfilePermission.value
+                        ),']') as permissionsJson
 
-              FROM ??
-                as Profile
+                      FROM ??
+                        as Profile
 
-              LEFT JOIN ??
-                as ProfilePermission
-                ON ProfilePermission.profileId = Profile.id
+                      LEFT JOIN ??
+                        as ProfilePermission
+                        ON ProfilePermission.profileId = Profile.id
 
-              LEFT JOIN ??
-                as Permission
-                ON Permission.id = ProfilePermission.permissionId
+                      LEFT JOIN ??
+                        as Permission
+                        ON Permission.id = ProfilePermission.permissionId
 
-             WHERE
-                Profile.type = ?
+                     WHERE
+                        Profile.type = ?
 
-             GROUP BY
-                Profile.id
-            """
-        ,   [@table, @Permission.table, @Permission.Permission.tablePermission, 'group']
-        ,   (err, rows) =>
-                if not err
-                    profiles= []
-                    if rows.length
-                        for row in rows
-                            profiles.push new @ row
-                    dfd.resolve profiles
-                else
-                    dfd.reject err
+                     GROUP BY
+                        Profile.id
+                    """
+                ,   [@table, @Permission.table, @Permission.Permission.tablePermission, 'group']
+                ,   (err, rows) =>
+                        if err
+                            throw new Error err
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, profiles
+                        profiles= []
+                        if rows.length
+                            for row in rows
+                                profiles.push new @ row
+                        dfd.resolve profiles
+
+            catch err
+                dfd.reject err
 
         dfd.promise

@@ -28,7 +28,7 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
 
 
 
-    @createByName: (profileId, name, db, done) ->
+    @createByName: (profileId, name, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -39,6 +39,7 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
 
                 if not name
                     throw new @createByName.BadValueError 'name cannot be null'
+
 
                 db.query """
                     INSERT
@@ -68,14 +69,14 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
                     """
                 ,   [@table, profileId, @Permission.tablePermission, name, @table]
                 ,   (err, res) =>
-                        if not err
-                            if res[0].affectedRows == 1 and res[1].length == 1
-                                data= new @ res[1][0]
-                                dfd.resolve data
-                            else
-                                err= Error 'profile permission not created'
+                        if err
+                            throw new Error err
+
+                        if res[0].affectedRows == 1 and res[1].length == 1
+                            data= new @ res[1][0]
+                            dfd.resolve data
                         else
-                            dfd.reject err
+                            throw new Error 'profile permission not created'
 
             catch err
                 dfd.reject err
@@ -90,55 +91,46 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
 
 
 
-    @enable: (id, enabled, db, done) ->
+    @enable: (id, enabled, db) ->
         dfd= do deferred
-        try
 
-            err= null
-            if not id
-                err= new @enable.BadValueError 'id cannot be null'
+        process.nextTick =>
+            try
 
-            enabled= enabled|0
+                if not id
+                    throw new @enable.BadValueError 'id cannot be null'
 
-            if err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
-                return dfd.reject err
 
-            db.query """
-                UPDATE
-                    ??
-                   SET
-                    enabledAt= IF(?, IF(enabledAt, enabledAt, NOW()), NULL)
-                 WHERE
-                    id= ?
-                ;
-                SELECT
-                    enabledAt
-                  FROM
-                    ??
-                 WHERE
-                    id= ?
-                """
-            ,   [@table, enabled, id, @table, id]
-            ,   (err, res) =>
+                enabled= enabled|0
 
-                if not err
-                    enabledAt= res[1][0].enabledAt
-                    enabled= !!enabledAt
-                    dfd.resolve
-                        enabledAt: enabledAt
-                        enabled: enabled
-                else
-                    dfd.reject err
+                db.query """
+                    UPDATE
+                        ??
+                       SET
+                        enabledAt= IF(?, IF(enabledAt, enabledAt, NOW()), NULL)
+                     WHERE
+                        id= ?
+                    ;
+                    SELECT
+                        enabledAt
+                      FROM
+                        ??
+                     WHERE
+                        id= ?
+                    """
+                ,   [@table, enabled, id, @table, id]
+                ,   (err, res) =>
+                        if err
+                            throw new Error err
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, state
+                        enabledAt= res[1][0].enabledAt
+                        enabled= !!enabledAt
+                        dfd.resolve
+                            enabledAt: enabledAt
+                            enabled: enabled
 
-        catch err
-            dfd.reject err
+            catch err
+                dfd.reject err
 
         dfd.promise
 

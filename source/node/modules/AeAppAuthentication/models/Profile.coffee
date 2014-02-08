@@ -35,7 +35,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @query: (query, db, done) ->
+    @query: (query, db) ->
         dfd= do deferred
 
         profiles= null
@@ -153,14 +153,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                                 profiles.push new @ row
                         dfd.resolve profiles
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -216,7 +209,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @getById: (id, db, done) ->
+    @getById: (id, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -334,14 +327,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         profile= new @ rows.shift()
                         dfd.resolve profile
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
         dfd.promise
 
@@ -356,7 +342,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @getByName: (name, db, done) ->
+    @getByName: (name, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -474,14 +460,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                             profile= new @ row
                         dfd.resolve profile
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, data
                 dfd.reject err
 
         dfd.promise
@@ -498,7 +477,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @create: (data, db, done) ->
+    @create: (data, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -593,14 +572,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         else
                             throw new Error 'profile not created'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, data
                 dfd.reject err
 
         dfd.promise
@@ -613,7 +585,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @createEmails: (id, data, db, done) ->
+    @createEmails: (id, data, db) ->
         dfd= do deferred
         try
 
@@ -670,14 +642,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         else
                             throw new Error 'profile emails not created'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
         catch err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
             dfd.reject err
 
         dfd.promise
@@ -690,7 +655,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @createPhones: (id, data, db, done) ->
+    @createPhones: (id, data, db) ->
         dfd= do deferred
         try
 
@@ -747,14 +712,9 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         else
                             throw new Error 'profile phones not created'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
+
 
         catch err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
             dfd.reject err
 
         dfd.promise
@@ -767,7 +727,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @update: (id, data, db, done) ->
+    @update: (id, data, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -866,14 +826,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         else
                             throw new Error 'profile does not updated'
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
@@ -882,7 +835,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @updateEmails: (profile, data, db, done) ->
+    @updateEmails: (profile, data, db) ->
         dfd= do deferred
 
         process.nextTick =>
@@ -1004,19 +957,12 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         else
                             dfd.resolve []
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
 
-    @updateEmails.BadValueError= class CreatePhonesBadValueError extends CreateBadValueError
+    @updateEmails.BadValueError= class UpdatesEmailsBadValueError extends CreateBadValueError
         constructor: (message) ->
             @message= message
 
@@ -1024,16 +970,16 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @updatePhones: (profile, data, db, done) ->
+    @updatePhones: (profile, data, db) ->
         dfd= do deferred
 
         process.nextTick =>
             try
 
                 if not profile or not profile.id
-                    throw new Error 'profile id cannot be null'
+                    throw new @updatePhones.BadValueError 'profile id cannot be null'
                 if not data
-                    throw new Error 'data cannot be null'
+                    throw new @updatePhones.BadValueError 'data cannot be null'
 
                 step= 0
 
@@ -1144,23 +1090,21 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         else
                             dfd.resolve []
 
-                        if done instanceof Function
-                            process.nextTick ->
-                                done err, data
-
             catch err
-                if done instanceof Function
-                    process.nextTick ->
-                        done err
                 dfd.reject err
 
         dfd.promise
 
+    @updatePhones.BadValueError= class UpdatePhonesBadValueError extends CreateBadValueError
+        constructor: (message) ->
+            @message= message
 
 
 
 
-    @delete: (id, db, done) ->
+
+
+    @delete: (id, db) ->
         dfd= do deferred
         try
 
@@ -1187,15 +1131,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     else
                         throw new @delete.NotFoundError 'not deleted'
 
-
-                    if done instanceof Function
-                        process.nextTick ->
-                            done err, data
-
         catch err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
             dfd.reject err
 
         dfd.promise
@@ -1212,7 +1148,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @enable: (id, enabled, db, done) ->
+    @enable: (id, enabled, db) ->
         dfd= do deferred
         try
 
@@ -1248,14 +1184,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         enabledAt: enabledAt
                         enabled: enabled
 
-                    if done instanceof Function
-                        process.nextTick ->
-                            done err, state
-
         catch err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
             dfd.reject err
 
         dfd.promise
@@ -1272,7 +1201,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
 
 
-    @enableEmail: (emailId, enabled, db, done) ->
+    @enableEmail: (emailId, enabled, db) ->
         dfd= do deferred
         try
 
@@ -1308,14 +1237,7 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                         enabledAt: enabledAt
                         enabled: enabled
 
-                    if done instanceof Function
-                        process.nextTick ->
-                            done err, state
-
         catch err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
             dfd.reject err
 
         dfd.promise

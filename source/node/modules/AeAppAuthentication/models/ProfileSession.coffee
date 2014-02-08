@@ -23,69 +23,58 @@ module.exports= (log) -> class ProfileSession
 
 
 
-    @queryRedis: (profileId, query, db, done) ->
+    @queryRedis: (profileId, query, db) ->
 
-    @queryMaria: (profileId, query, db, done) ->
+    @queryMaria: (profileId, query, db) ->
         log 'ProfileSession#queryMaria', profileId, query
-        sessions= null
 
         dfd= do deferred
+        process.nextTick =>
+            try
 
-        err= null
-        if not profileId
-            err= Error 'profileId cannot be null'
+                if not profileId
+                    throw new Error 'profileId cannot be null'
 
-        if err
-            if done instanceof Function
-                process.nextTick ->
-                    done err
-            return dfd.reject err
+                db.query """
+                    SELECT
 
-        db.query """
-            SELECT
+                        ProfileSession.*
 
-                ProfileSession.*
+                      FROM ?? AS ProfileSession
 
-              FROM ??
-                as ProfileSession
+                     WHERE
+                        ProfileSession.profileId= ?
+                    """
+                ,   [@table, profileId]
+                ,   (err, rows) =>
+                        if err
+                            throw new Error err
 
-             WHERE
-                ProfileSession.profileId= ?
-            """
-        ,   [@table, profileId]
-        ,   (err, rows) =>
-                if not err
-                    sessions= []
-                    if rows.length
-                        for row in rows
-                            sessions.push new @ row
-                    dfd.resolve sessions
-                else
-                    dfd.reject err
+                        sessions= []
+                        if rows.length
+                            for row in rows
+                                sessions.push new @ row
+                        dfd.resolve sessions
 
-                if done instanceof Function
-                    process.nextTick ->
-                        done err, sessions
+            catch
+                dfd.reject err
 
         dfd.promise
 
 
 
-    @insertMaria: (profileId, sessionId, ip, headers, maria, done) ->
+    @insertMaria: (profileId, sessionId, ip, headers, maria) ->
         dfd= do deferred
 
         process.nextTick =>
             try
 
-                err= null
-
                 if not profileId
-                    err= Error 'profileId cannot be null'
+                    throw new Error 'profileId cannot be null'
 
                 if not sessionId
-                    err= Error 'sessionId cannot be null'
+                    throw new Error 'sessionId cannot be null'
 
-                if err then throw err
 
                 maria.query """
                     INSERT
@@ -107,11 +96,11 @@ module.exports= (log) -> class ProfileSession
                     """
                 ,   [@table, profileId, sessionId, ip, headers, profileId, sessionId, ip, headers]
                 ,   (err, res) =>
+                        if err
+                            throw new Error err
+
                         log 'INSERTED SESS', err, res
-                        if not err
-                            dfd.resolve sessionId
-                        else
-                            dfd.reject err
+                        dfd.resolve sessionId
 
             catch err
                 dfd.reject err
