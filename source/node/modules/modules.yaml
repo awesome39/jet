@@ -5,8 +5,6 @@ enabled:
 
     - AeConfig
 
-    - AeView
-
     - AeDb
     - AeDbMaria
     - AeDbRedis
