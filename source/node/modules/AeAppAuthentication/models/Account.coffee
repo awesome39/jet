@@ -122,8 +122,8 @@ module.exports= (log) -> class Account
                             throw new Error err
 
                         if res[0].affectedRows == 1 and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data
+                            account= new @ res[1][0]
+                            dfd.resolve account
                         else
                             throw new Error 'account not created'
 
@@ -272,8 +272,8 @@ module.exports= (log) -> class Account
                             throw new Error err
 
                         if res[0].affectedRows == 1 and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data
+                            account= new @ res[1][0]
+                            dfd.resolve account
                         else
                             throw new Error 'account not updated'
 
