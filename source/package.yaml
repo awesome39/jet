@@ -6,7 +6,6 @@ version: 0.4.7
 config:
 
     logfile: './main.log'
-    pidfile: './main.pid'
 
 
 
