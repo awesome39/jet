@@ -32,25 +32,25 @@ module.exports= (manifest, env) ->
 
 
 
-        app.use App.static "#{__dirname}/../pub/assets"
+        #app.use App.static "#{__dirname}/../pub/assets"
 
 
 
         #app.set 'views', "#{__dirname}/views"
-        app.set 'view engine', 'jade'
+        #app.set 'view engine', 'jade'
 
 
 
         app.enable 'strict routing'
 
 
-        app.get '/', (req, res, next) ->
-            if do req.isAuthenticated
-                res.redirect '/engine/'
-            else
-                res.redirect '/welcome/'
+        #app.get '/', (req, res, next) ->
+        #    if do req.isAuthenticated
+        #        res.redirect '/engine/'
+        #    else
+        #        res.redirect '/welcome/'
 
-        app.get '/welcome', (req, res) -> res.redirect '/welcome/'
+        #app.get '/welcome', (req, res) -> res.redirect '/welcome/'
 
 
 

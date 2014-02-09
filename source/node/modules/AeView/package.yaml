@@ -1,0 +1,14 @@
+name: View
+description: View module
+
+version: 0.0.1
+
+
+
+config:
+
+    dependencies:
+
+        Config: latest
+
+
