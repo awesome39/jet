@@ -1,5 +1,5 @@
-name: View
-description: View module
+name: AppView
+description: AppView module
 
 version: 0.0.1
 
@@ -8,6 +8,8 @@ version: 0.0.1
 config:
 
     dependencies:
+
+        App: latest
 
         Config: latest
 
