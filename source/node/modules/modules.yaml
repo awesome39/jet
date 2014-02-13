@@ -12,9 +12,8 @@ enabled:
     - AeApp
     - AeAppServer
 
-    - AeAppAuthentication
-    - AeAppAuthenticationGithub
-    - AeAppAuthorization
+    - AeAppAuth
+    - AeAppAuthGithub
     - AeAppAudit
 
     - AeApiProfile

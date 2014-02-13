@@ -5,7 +5,7 @@
 #
 # @author Michael F <tehfreak@awesome39.com>
 #
-module.exports= class AppAuthenticationModule extends Module
+module.exports= class AppAuthModule extends Module
 
     constructor: (config= {}) ->
         super
@@ -23,16 +23,12 @@ module.exports= class AppAuthenticationModule extends Module
         #
         @factory 'Account', require './models/Account'
 
-
-
         #
         # Group Model
         #
         # @factory
         #
         @factory 'Group', require './models/Group'
-
-
 
         #
         # Profile Model
@@ -54,6 +50,37 @@ module.exports= class AppAuthenticationModule extends Module
         # @factory
         #
         @factory 'ProfileSession', require './models/ProfileSession'
+
+        #
+        # Permission Model
+        #
+        # @factory
+        #
+        @factory 'Permission', require './models/Permission'
+
+        #
+        # Profile Permission Model
+        #
+        # @factory
+        #
+        @factory 'ProfilePermission', require './models/ProfilePermission'
+
+
+
+        #
+        # Authorize Service
+        #
+        # @factory
+        #
+        @factory 'Authorize', require './services/Authorize'
+
+        #
+        # Instance of Authorize Service
+        #
+        # @factory
+        #
+        @factory '$authorize', (Authorize) ->
+            new Authorize config
 
 
 
