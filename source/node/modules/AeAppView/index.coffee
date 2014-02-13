@@ -1,4 +1,5 @@
 {Module}= require 'di'
+{resolve}= require 'path'
 
 #
 # AppView Module
@@ -27,5 +28,8 @@ module.exports= class AppViewModule extends Module
     # @public
     #
     init: (app, cfg, AppView) ->
+
+        app.set 'views', resolve cfg.AppView.views
+        app.set 'view engine', 'jade'
 
         app.use cfg.AppView.route, new AppView

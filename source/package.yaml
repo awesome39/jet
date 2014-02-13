@@ -23,6 +23,8 @@ config:
 
         AppView: # Конфиг модуля AeAppView
 
+            views: ./node/views
+
             route: /
             paths:
                 -
