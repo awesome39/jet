@@ -1,5 +1,4 @@
 {Module}= require 'di'
-{resolve}= require 'path'
 
 #
 # AppView Module
@@ -12,13 +11,21 @@ module.exports= class AppViewModule extends Module
 
 
 
+    constructor: (config= {}) ->
+        super
+
+        #
+        # App View Handler
+        #
+        @factory 'AppView', require './handlers'
+
+
+
     #
     # Initialize module with injector.
     #
     # @public
     #
-    init: (injector, cfg) ->
+    init: (app, cfg, AppView) ->
 
-        injector.invoke (app, App) ->
-
-            app.use '/', App.static resolve cfg.AppView.path
+        app.use cfg.AppView.route, new AppView
