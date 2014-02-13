@@ -32,10 +32,6 @@ module.exports= (manifest, env) ->
 
 
 
-        #app.use App.static "#{__dirname}/../pub/assets"
-
-
-
         #app.set 'views', "#{__dirname}/views"
         #app.set 'view engine', 'jade'
 
@@ -69,10 +65,6 @@ module.exports= (manifest, env) ->
                 do next
             else
                 res.redirect '/welcome/'
-
-
-
-        app.use App.static "#{__dirname}/../pub/templates/Manage"
 
 
 
