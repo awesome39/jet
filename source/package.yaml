@@ -30,7 +30,7 @@ config:
                     path: ./pub/assets
                 -
                     route: /
-                    path: ./pub/templates
+                    path: ./pub/templates/Manage
 
         db:
 

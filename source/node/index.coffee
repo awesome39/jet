@@ -40,17 +40,21 @@ module.exports= (manifest, env) ->
         app.enable 'strict routing'
 
 
-        #app.get '/', (req, res, next) ->
-        #    if do req.isAuthenticated
-        #        res.redirect '/engine/'
-        #    else
-        #        res.redirect '/welcome/'
 
-        #app.get '/welcome', (req, res) -> res.redirect '/welcome/'
+        app.get '/', (req, res, next) ->
+            if do req.isAuthenticated
+                res.redirect '/engine/'
+            else
+                res.redirect '/welcome/'
+
+
+
+        app.get '/welcome', (req, res) -> res.redirect '/welcome/'
 
 
 
         app.get '/project', (req, res) -> res.redirect '/project/'
+
         app.get '/project/', (req, res, next) ->
             if do req.isAuthenticated
                 do next
@@ -60,6 +64,7 @@ module.exports= (manifest, env) ->
 
 
         app.get '/engine', (req, res) -> res.redirect '/engine/'
+
         app.get '/engine/', (req, res, next) ->
             if do req.isAuthenticated
                 do next
