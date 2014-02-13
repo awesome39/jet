@@ -21,6 +21,10 @@ config:
                 clientID: cc9377048ebeabf941cf
                 clientSecret: 4b917b48ab0e2265802edb2b733c892833ad0a74
 
+        AppView: # Конфиг модуля AeAppView
+
+            path: ./pub
+
         db:
 
             maria:

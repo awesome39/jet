@@ -9,3 +9,16 @@
 # @copyright Awesome39.com 2014
 #
 module.exports= class AppViewModule extends Module
+
+
+
+    #
+    # Initialize module with injector.
+    #
+    # @public
+    #
+    init: (injector, cfg) ->
+
+        injector.invoke (app, App) ->
+
+            app.use '/', App.static resolve cfg.AppView.path
