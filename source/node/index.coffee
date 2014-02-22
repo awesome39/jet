@@ -16,7 +16,7 @@ module.exports= (manifest, env) ->
         Mod= require "./modules/#{mod}"
         Mod.manifest= require "./modules/#{mod}/package"
 
-        enabled.push new Mod manifest.config, env
+        enabled.push new Mod cfg, env
 
     injector= new di.Injector enabled
 

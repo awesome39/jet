@@ -5,10 +5,10 @@
 #
 #
 #
-module.exports= (App, cfg, log) ->
+module.exports= (App, log) ->
     class AppView extends App
 
-        constructor: () ->
+        constructor: (config) ->
             app= super
 
 
@@ -18,7 +18,7 @@ module.exports= (App, cfg, log) ->
 
 
 
-            for path in cfg.AppView.paths
+            for path in config.AppView.paths
 
                 app.use path.route, App.static resolve path.path
 

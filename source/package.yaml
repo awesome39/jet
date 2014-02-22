@@ -21,18 +21,7 @@ config:
                 clientID: cc9377048ebeabf941cf
                 clientSecret: 4b917b48ab0e2265802edb2b733c892833ad0a74
 
-        AppView: # Конфиг модуля AeAppView
 
-            views: ./node/views
-
-            route: /
-            paths:
-                -
-                    route: /
-                    path: ./pub/assets
-                -
-                    route: /
-                    path: ./pub/templates/Manage
 
         db:
 
@@ -58,22 +47,6 @@ config:
                 host: 127.0.0.1
                 port: 6379
 
-        sender:
-            email:
-
-                host: 'smtp.gmail.com'
-                port: 465
-
-                secureConnection: true
-
-                address: 'example@google.com'
-                password: 'password'
-                sign: 'okay'
-
-            sms:
-                id: 'id'
-                key: 'key'
-                from: 'from'
 
 
 

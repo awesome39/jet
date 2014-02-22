@@ -16,3 +16,17 @@ config:
 dependencies:
 
     redis: 0.10.0
+
+
+
+config:
+
+    default:
+
+        db:
+
+            redis:
+
+                host: 127.0.0.1
+                port: 6379
+

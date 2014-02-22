@@ -1,4 +1,5 @@
 {Module}= require 'di'
+localConfig= require('./package.json').config
 
 #
 # Db Redis Module
@@ -37,9 +38,13 @@ module.exports= class DbRedisModule extends Module
     #
     # @public
     #
-    init: (injector, $cfg, $db) ->
+    init: (injector, cfg, $db, $cfgJoin, env) ->
 
-        if $cfg.db.redis
+        config= $cfgJoin cfg, localConfig, env
+
+        console.log 'conf', config
+
+        if config.db.redis
 
             $db.redis= injector.invoke ($dbRedis) ->
                 $dbRedis

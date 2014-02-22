@@ -14,3 +14,20 @@ config:
         Config: latest
 
 
+
+config:
+
+    default:
+
+        AppView: # Конфиг модуля AeAppView
+
+            views: ./node/views
+
+            route: /
+            paths:
+                -
+                    route: /
+                    path: ./pub/assets
+                -
+                    route: /
+                    path: ./pub/templates/Manage

@@ -12,12 +12,10 @@ module.exports= class ConfigModule extends Module
 
 
 
-        #
-        # Config Service
-        #
-        # @factory
-        #
-        @factory 'ConfigService', require './services/Config'
+        @factory 'ConfigJoinService', require './services/ConfigJoin'
+
+        @factory '$cfgJoin', (ConfigJoinService) ->
+            new ConfigJoinService
 
 
 
@@ -26,9 +24,9 @@ module.exports= class ConfigModule extends Module
         #
         # @factory
         #
-        @factory '$cfg', (ConfigService) ->
+        @factory '$cfg', ($cfgJoin) ->
+            $cfgJoin {}, config, env
 
-            new ConfigService config, env
 
         #
         # Instance of Config Service
@@ -36,8 +34,14 @@ module.exports= class ConfigModule extends Module
         # @factory
         #
         @factory 'cfg', ($cfg) ->
-
             $cfg
+
+
+
+
+
+        @factory 'env', ->
+            env
 
 
 

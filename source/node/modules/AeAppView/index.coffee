@@ -1,5 +1,6 @@
 {Module}= require 'di'
 {resolve}= require 'path'
+localConfig= require('./package.json').config
 
 #
 # AppView Module
@@ -27,9 +28,12 @@ module.exports= class AppViewModule extends Module
     #
     # @public
     #
-    init: (app, cfg, AppView) ->
+    init: (app, cfg, $cfgJoin, env, AppView) ->
 
-        app.set 'views', resolve cfg.AppView.views
+        config= $cfgJoin cfg, localConfig, env
+
+
+        app.set 'views', resolve config.AppView.views
         app.set 'view engine', 'jade'
 
-        app.use cfg.AppView.route, new AppView
+        app.use config.AppView.route, new AppView config
