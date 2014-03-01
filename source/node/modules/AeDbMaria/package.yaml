@@ -16,3 +16,55 @@ config:
 dependencies:
 
     mysql: 2.0.1
+
+
+
+config:
+
+    default:
+
+        db:
+
+            maria:
+
+                host: 127.0.0.1
+                port: 3306
+
+                database: jet
+
+                user: jet
+                password: jet
+
+                timezone: Z
+
+                multipleStatements: true
+
+                debug:
+                    - ComQueryPacket
+
+
+
+    testing:
+
+        db:
+
+            maria:
+                database: jet_testing
+
+
+
+    staging:
+
+        db:
+
+            maria:
+                database: jet_staging
+
+
+
+    production:
+
+        db:
+
+            maria:
+                debug: false
