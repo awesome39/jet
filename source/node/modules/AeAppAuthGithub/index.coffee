@@ -6,7 +6,7 @@
 #
 # @author Michael F <tehfreak@awesome39.com>
 #
-module.exports= class AppAuthenticationGithubModule extends Module
+module.exports= class AppAuthGithubModule extends Module
 
     constructor: (config= {}) ->
         super
@@ -29,7 +29,7 @@ module.exports= class AppAuthenticationGithubModule extends Module
         #
         # App Authentication Github Handler
         #
-        @factory 'AppAuthenticationGithub', require './handlers'
+        @factory 'AppAuthGithub', require './handlers'
 
 
 
@@ -53,5 +53,5 @@ module.exports= class AppAuthenticationGithubModule extends Module
                         providerId: github.id
                         providerName: github.username
 
-        app.use '/', injector.invoke (AppAuthenticationGithub) ->
-            new AppAuthenticationGithub
+        app.use '/', injector.invoke (AppAuthGithub) ->
+            new AppAuthGithub

@@ -9,7 +9,7 @@ config:
 
     dependencies:
 
-        AppAuthentication: latest
+        AppAuth: latest
 
 
 
