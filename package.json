@@ -26,7 +26,7 @@
   "scripts": {
     "install": "npm run-script install-source && npm run-script build",
 
-    "install-source": "cd source/pub/assets && bower install",
+    "install-source": "cd source/pub/assets && bower install --allow-root",
 
     "build": "npm run-script build-node && npm run-script build-node-modules && npm run-script build-views",
     "build-node": "grunt build-node",
