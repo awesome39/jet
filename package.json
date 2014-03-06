@@ -24,7 +24,7 @@
 
 
   "scripts": {
-    "install": "npm run-script install-source && npm run-script build",
+    "install": "npm run-script install-source",
 
     "install-source": "cd source/pub/assets && bower install",
 

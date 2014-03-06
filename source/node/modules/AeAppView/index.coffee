@@ -13,7 +13,7 @@ module.exports= class AppViewModule extends Module
 
 
 
-    constructor: (config= {}) ->
+    constructor: ->
         super
 
         #

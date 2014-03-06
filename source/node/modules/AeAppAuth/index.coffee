@@ -7,12 +7,8 @@
 #
 module.exports= class AppAuthModule extends Module
 
-    constructor: (config= {}) ->
+    constructor: ->
         super
-
-
-
-        @config= @constructor.manifest.config or {}
 
 
 
@@ -80,7 +76,7 @@ module.exports= class AppAuthModule extends Module
         # @factory
         #
         @factory '$authorize', (Authorize) ->
-            new Authorize config
+            new Authorize
 
 
 
@@ -97,7 +93,7 @@ module.exports= class AppAuthModule extends Module
         # @factory
         #
         @factory '$auth', (Auth, $session) ->
-            $auth= new Auth config
+            $auth= new Auth
 
             $auth.$session= $session
 
@@ -135,7 +131,7 @@ module.exports= class AppAuthModule extends Module
         # @factory
         #
         @factory '$authenticate', (Authenticate) ->
-            new Authenticate config
+            new Authenticate
 
 
 

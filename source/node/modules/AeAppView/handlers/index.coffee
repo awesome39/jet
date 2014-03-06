@@ -5,23 +5,22 @@
 #
 #
 #
-module.exports= (App, log) ->
-    class AppView extends App
+module.exports= (App, log) -> class AppView extends App
 
-        constructor: (config) ->
-            app= super
-
-
-
-            app.set 'log', log= log.namespace '[AppView]'
-            log 'construct...'
+    constructor: (config) ->
+        app= super
 
 
 
-            for path in config.AppView.paths
-
-                app.use path.route, App.static resolve path.path
-
+        app.set 'log', log= log.namespace '[AppView]'
+        log 'construct...'
 
 
-            return app
+
+        for path in config.AppView.paths
+
+            app.use path.route, App.static resolve path.path
+
+
+
+        return app

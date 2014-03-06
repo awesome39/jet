@@ -1,5 +1,6 @@
 {Module}= require 'di'
 {Strategy}= require 'passport-github'
+localConfig= require('./package.json').config
 
 #
 # App Authentication Github Module
@@ -40,12 +41,14 @@ module.exports= class AppAuthGithubModule extends Module
     #
     init: (injector, app) ->
 
-        injector.invoke ($auth, AccountGithub, cfg) ->
+        injector.invoke ($auth, cfg, $cfgJoin, env, AccountGithub) ->
+
+            config= $cfgJoin cfg, localConfig, env
 
             $auth.use new Strategy
 
-                clientID: cfg.auth.github.clientID
-                clientSecret: cfg.auth.github.clientSecret
+                clientID: config.auth.github.clientID
+                clientSecret: config.auth.github.clientSecret
 
             ,   (accessToken, refreshToken, github, done) ->
 

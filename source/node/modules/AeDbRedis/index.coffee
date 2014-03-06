@@ -8,7 +8,7 @@ localConfig= require('./package.json').config
 #
 module.exports= class DbRedisModule extends Module
 
-    constructor: (config= {}, env= 'development') ->
+    constructor: ->
         super
 
 
@@ -27,9 +27,10 @@ module.exports= class DbRedisModule extends Module
         #
         # @factory
         #
-        @factory '$dbRedis', ($cfg, $db, DbRedisService, log) ->
+        @factory '$dbRedis', ($cfg, $cfgJoin, env, $db, DbRedisService) ->
+            config= $cfgJoin $cfg, localConfig, env
 
-            new DbRedisService $cfg.db.redis
+            new DbRedisService config.db.redis
 
 
 
@@ -41,8 +42,6 @@ module.exports= class DbRedisModule extends Module
     init: (injector, cfg, $db, $cfgJoin, env) ->
 
         config= $cfgJoin cfg, localConfig, env
-
-        console.log 'conf', config
 
         if config.db.redis
 
