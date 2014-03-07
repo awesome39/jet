@@ -144,15 +144,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, 'user']
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        profiles= []
-                        if rows.length
-                            for row in rows
-                                profiles.push new @ row
-                        dfd.resolve profiles
+                            profiles= []
+                            if rows.length
+                                for row in rows
+                                    profiles.push new @ row
+                            dfd.resolve profiles
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -317,16 +321,20 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, id]
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
-                        if rows.length == 0
-                            throw new @getById.NotFoundError 'not found'
-                        if rows.length and not rows[0].id
-                            throw new @getById.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if rows.length == 0
+                                throw new @getById.NotFoundError 'not found'
+                            if rows.length and not rows[0].id
+                                throw new @getById.NotFoundError 'not found'
 
-                        profile= new @ rows.shift()
-                        dfd.resolve profile
+                            profile= new @ rows.shift()
+                            dfd.resolve profile
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
         dfd.promise
@@ -450,17 +458,21 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, @tableEmail, @tablePhone, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, name]
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if rows.length == 0
-                            throw new getByName.NotFoundError 'not found'
+                            if rows.length == 0
+                                throw new getByName.NotFoundError 'not found'
 
-                        row= rows.shift()
-                        if row.id
-                            profile= new @ row
-                        dfd.resolve profile
+                            row= rows.shift()
+                            if row.id
+                                profile= new @ row
+                            dfd.resolve profile
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -564,15 +576,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, data.name,'user',data.title, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == 1 and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data
-                        else
-                            throw new Error 'profile not created'
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                data= new @ res[1][0]
+                                dfd.resolve data
+                            else
+                                throw new Error 'profile not created'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -634,15 +650,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@tableEmail, bulk, @tableEmail, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == bulk.length and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data.emails
-                        else
-                            throw new Error 'profile emails not created'
+                            if res[0].affectedRows == bulk.length and res[1].length == 1
+                                data= new @ res[1][0]
+                                dfd.resolve data.emails
+                            else
+                                throw new Error 'profile emails not created'
 
+
+                        catch err
+                            dfd.reject err
         catch err
             dfd.reject err
 
@@ -704,17 +724,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@tablePhone, bulk, @tablePhone, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == bulk.length and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data.phones
-                        else
-                            throw new Error 'profile phones not created'
+                            if res[0].affectedRows == bulk.length and res[1].length == 1
+                                data= new @ res[1][0]
+                                dfd.resolve data.phones
+                            else
+                                throw new Error 'profile phones not created'
 
 
-
+                        catch err
+                            dfd.reject err
         catch err
             dfd.reject err
 
@@ -816,17 +838,21 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@table, data.title, id, @table, @Account.table, @Group.table, @table, @Permission.table, @Permission.Permission.table, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        log 'SELECT AFTER UPDATE', err, res
+                            log 'SELECT AFTER UPDATE', err, res
 
-                        if not err and res[0].affectedRows == 1 and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data
-                        else
-                            throw new Error 'profile does not updated'
+                            if not err and res[0].affectedRows == 1 and res[1].length == 1
+                                data= new @ res[1][0]
+                                dfd.resolve data
+                            else
+                                throw new Error 'profile does not updated'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -947,17 +973,20 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                 db.query query, queryParams
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
+
+                            if step then data= res[step][0] else data= res[0]
+                            if data
+                                data= new @ data
+                                dfd.resolve data.emails
+                            else
+                                dfd.resolve []
 
 
-                        if step then data= res[step][0] else data= res[0]
-                        if data
-                            data= new @ data
-                            dfd.resolve data.emails
-                        else
-                            dfd.resolve []
-
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -1081,16 +1110,20 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
 
                 db.query query, queryParams
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if step then data= res[step][0] else data= res[0]
-                        if data
-                            data= new @ data
-                            dfd.resolve data.phones
-                        else
-                            dfd.resolve []
+                            if step then data= res[step][0] else data= res[0]
+                            if data
+                                data= new @ data
+                                dfd.resolve data.phones
+                            else
+                                dfd.resolve []
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -1123,15 +1156,18 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 """
             ,   [@table, id]
             ,   (err, res) =>
-                    if err
-                        throw new Error err
+                    try
+                        if err
+                            throw new Error err
+
+                        if res.affectedRows == 1
+                            dfd.resolve true
+                        else
+                            throw new @delete.NotFoundError 'not deleted'
 
 
-                    if res.affectedRows == 1
-                        dfd.resolve true
-                    else
-                        throw new @delete.NotFoundError 'not deleted'
-
+                    catch err
+                        dfd.reject err
         catch err
             dfd.reject err
 
@@ -1176,15 +1212,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                 """
             ,   [@table, enabled, id, @table, id]
             ,   (err, res) =>
-                    if err
-                        throw new Error err
+                    try
+                        if err
+                            throw new Error err
 
-                    enabledAt= res[1][0].enabledAt
-                    enabled= !!enabledAt
-                    dfd.resolve
-                        enabledAt: enabledAt
-                        enabled: enabled
+                        enabledAt= res[1][0].enabledAt
+                        enabled= !!enabledAt
+                        dfd.resolve
+                            enabledAt: enabledAt
+                            enabled: enabled
 
+
+                    catch err
+                        dfd.reject err
         catch err
             dfd.reject err
 
@@ -1231,15 +1271,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@tableEmail, enabled, emailId, @tableEmail, emailId]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        enabledAt= res[1][0].enabledAt
-                        enabled= !!enabledAt
-                        dfd.resolve
-                            enabledAt: enabledAt
-                            enabled: enabled
+                            enabledAt= res[1][0].enabledAt
+                            enabled= !!enabledAt
+                            dfd.resolve
+                                enabledAt: enabledAt
+                                enabled: enabled
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -1286,15 +1330,19 @@ module.exports= (Account, ProfileGroup, ProfilePermission, log) -> class Profile
                     """
                 ,   [@tableEmail, verified, emailId, @tableEmail, emailId]
                 ,   (err, res) =>
-                    if err
-                        throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                    verifiedAt= res[1][0].verifiedAt
-                    verified= !!verifiedAt
-                    dfd.resolve
-                        verifiedAt: verifiedAt
-                        verified: verified
+                            verifiedAt= res[1][0].verifiedAt
+                            verified= !!verifiedAt
+                            dfd.resolve
+                                verifiedAt: verifiedAt
+                                verified: verified
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 

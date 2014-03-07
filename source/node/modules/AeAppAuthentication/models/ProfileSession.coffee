@@ -47,16 +47,20 @@ module.exports= (log) -> class ProfileSession
                     """
                 ,   [@table, profileId]
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        sessions= []
-                        if rows.length
-                            for row in rows
-                                sessions.push new @ row
-                        dfd.resolve sessions
+                            sessions= []
+                            if rows.length
+                                for row in rows
+                                    sessions.push new @ row
+                            dfd.resolve sessions
 
-            catch
+
+                        catch err
+                            dfd.reject err
+            catch err
                 dfd.reject err
 
         dfd.promise
