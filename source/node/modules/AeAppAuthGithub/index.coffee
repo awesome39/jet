@@ -1,6 +1,6 @@
 {Module}= require 'di'
 {Strategy}= require 'passport-github'
-localConfig= require('./package.json').config
+localConfig= require './package'
 
 #
 # App Authentication Github Module
@@ -9,12 +9,10 @@ localConfig= require('./package.json').config
 #
 module.exports= class AppAuthGithubModule extends Module
 
-    constructor: (config= {}) ->
+    constructor: ->
         super
 
 
-
-        @config= @constructor.manifest.config or {}
 
 
 
@@ -43,7 +41,7 @@ module.exports= class AppAuthGithubModule extends Module
 
         injector.invoke ($auth, cfg, $cfgJoin, env, AccountGithub) ->
 
-            config= $cfgJoin cfg, localConfig, env
+            config= $cfgJoin cfg, localConfig.config, env
 
             $auth.use new Strategy
 

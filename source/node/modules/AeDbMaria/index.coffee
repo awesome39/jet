@@ -1,5 +1,5 @@
 {Module}= require 'di'
-localConfig= require('./package.json').config
+localConfig= require './package'
 
 
 
@@ -31,6 +31,6 @@ module.exports= class DbMariaModule extends Module
         #
         @factory '$dbMaria', ($cfg, $cfgJoin, env, $db, DbMariaService) ->
 
-            config= $cfgJoin $cfg, localConfig, env
+            config= $cfgJoin $cfg, localConfig.config, env
 
             new DbMariaService config.db.maria

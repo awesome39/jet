@@ -1,4 +1,6 @@
 {Module}= require 'di'
+localConfig= require './package'
+
 
 #
 # AppSocket Module
@@ -7,5 +9,5 @@
 #
 module.exports= class AppSocketModule extends Module
 
-    constructor: (config= {}, env= 'development') ->
+    constructor: ->
         super

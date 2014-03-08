@@ -1,4 +1,5 @@
 {Module}= require 'di'
+localConfig= require './package'
 
 #
 # App Audit Module
@@ -7,12 +8,11 @@
 #
 module.exports= class AppAuditModule extends Module
 
-    constructor: (config= {}) ->
+    constructor: ->
         super
 
 
 
-        @config= @constructor.manifest.config or {}
 
 
 
@@ -29,4 +29,4 @@ module.exports= class AppAuditModule extends Module
         # @factory
         #
         @factory '$audit', (Audit) ->
-            new Audit config
+            new Audit

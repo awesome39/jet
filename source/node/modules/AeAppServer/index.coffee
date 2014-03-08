@@ -1,5 +1,6 @@
 {Module}= require 'di'
 {createServer}= require 'http'
+localConfig= require './package'
 
 #
 # AppServer Module
@@ -8,7 +9,7 @@
 #
 module.exports= class AppServerModule extends Module
 
-    constructor: (config= {}, env= 'development') ->
+    constructor: ->
         super
 
 

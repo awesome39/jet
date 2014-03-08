@@ -1,4 +1,6 @@
 {Module}= require 'di'
+localConfig= require './package'
+
 
 #
 # Log Module

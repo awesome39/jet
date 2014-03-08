@@ -1,4 +1,5 @@
 {Module}= require 'di'
+localConfig= require './package'
 
 #
 # App Module

@@ -1,4 +1,5 @@
 {Module}= require 'di'
+localConfig= require './package'
 
 #
 # Db Module
@@ -7,7 +8,7 @@
 #
 module.exports= class DbModule extends Module
 
-    constructor: (config= {}, env= 'development') ->
+    constructor: ->
         super
 
 
@@ -26,7 +27,7 @@ module.exports= class DbModule extends Module
         #
         # @factory
         #
-        @factory '$db', (DbService, log) ->
+        @factory '$db', (DbService) ->
 
             new DbService
 
@@ -52,6 +53,5 @@ module.exports= class DbModule extends Module
 
             app.set 'db', $db
 
-            # @todo
             $db.maria= $dbMaria
             $db.redis= $dbRedis

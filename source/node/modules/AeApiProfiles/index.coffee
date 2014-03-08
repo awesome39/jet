@@ -1,4 +1,5 @@
 {Module}= require 'di'
+localConfig= require './package'
 
 #
 # Awesome Profiles API
@@ -7,12 +8,10 @@
 #
 module.exports= class ProfilesApi extends Module
 
-    constructor: (config= {}) ->
+    constructor: ->
         super
 
 
-
-        @config= @constructor.manifest.config or {}
 
 
 

@@ -1,5 +1,5 @@
 {Module}= require 'di'
-localConfig= require('./package.json').config
+localConfig= require './package'
 
 #
 # Db Redis Module
@@ -28,7 +28,7 @@ module.exports= class DbRedisModule extends Module
         # @factory
         #
         @factory '$dbRedis', ($cfg, $cfgJoin, env, $db, DbRedisService) ->
-            config= $cfgJoin $cfg, localConfig, env
+            config= $cfgJoin $cfg, localConfig.config, env
 
             new DbRedisService config.db.redis
 
@@ -41,7 +41,7 @@ module.exports= class DbRedisModule extends Module
     #
     init: (injector, cfg, $db, $cfgJoin, env) ->
 
-        config= $cfgJoin cfg, localConfig, env
+        config= $cfgJoin cfg, localConfig.config, env
 
         if config.db.redis
 

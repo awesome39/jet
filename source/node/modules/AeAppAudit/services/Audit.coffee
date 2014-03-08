@@ -7,7 +7,7 @@ ware= require 'ware'
 #
 module.exports= (log) -> class AuditService
 
-    constructor: () ->
+    constructor: ->
 
         log= log.namespace '[AuditService]'
         log 'Created.', do process.hrtime
