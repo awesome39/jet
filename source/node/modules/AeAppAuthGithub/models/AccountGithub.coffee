@@ -26,27 +26,30 @@ module.exports= (Account, log) -> class AccountGithub extends Account
         dfd= do deferred
 
         process.nextTick =>
+            try
 
-            db.query """
-
+                db.query """
                     SELECT
-
                         *
-
-                      FROM
+                    FROM
                         ?? as AccountGithub
 
-                     WHERE
+                    WHERE
                         AccountGithub.providerId= ?
+                    """
+                ,   [@table, account.providerId]
+                ,   (err, res) =>
+                        try
+                            if not err
+                                dfd.resolve res[0] or null
+                            else
+                                throw new Error err
 
-                """
-            ,   [@table, account.providerId]
-            ,   (err, res) =>
-                    if not err
-                        dfd.resolve res[0] or null
-                    else
-                        dfd.reject err
 
+                        catch err
+                            dfd.reject err
+            catch err
+                dfd.reject err
         dfd.promise
 
 
@@ -54,29 +57,25 @@ module.exports= (Account, log) -> class AccountGithub extends Account
     @query: (profile, query, db) ->
         dfd= do deferred
 
-        accounts= null
         process.nextTick =>
             try
 
                 db.query """
-
                     SELECT
-
                         AccountGithub.id,
                         AccountGithub.profileId as userId,
                         AccountGithub.providerId,
                         AccountGithub.providerName
-
-                      FROM
+                    FROM
                         ?? as AccountGithub
-
-                     WHERE
+                    WHERE
                         AccountGithub.profileId= ?
-
                     """
                 ,   [@table, profile.id]
                 ,   (err, rows) =>
-                        if not err
+                        try
+                            if err
+                                throw new Error err
 
                             accounts= []
                             if rows.length
@@ -85,9 +84,9 @@ module.exports= (Account, log) -> class AccountGithub extends Account
 
                             dfd.resolve accounts
 
-                        else
-                            dfd.reject err
 
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 

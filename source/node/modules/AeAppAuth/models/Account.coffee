@@ -64,14 +64,18 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, data.name, data.pass]
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        account= null
-                        if rows.length
-                            account= new @ rows.shift()
-                        dfd.resolve account
+                            account= null
+                            if rows.length
+                                account= new @ rows.shift()
+                            dfd.resolve account
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -118,15 +122,19 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, profileId, data.name, data.pass, @table]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == 1 and res[1].length == 1
-                            account= new @ res[1][0]
-                            dfd.resolve account
-                        else
-                            throw new Error 'account not created'
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                account= new @ res[1][0]
+                                dfd.resolve account
+                            else
+                                throw new Error 'account not created'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -159,15 +167,19 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table]
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        accounts= []
-                        if rows.length
-                            for row in rows
-                                accounts.push new @ row
-                        dfd.resolve accounts
+                            accounts= []
+                            if rows.length
+                                for row in rows
+                                    accounts.push new @ row
+                            dfd.resolve accounts
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -201,15 +213,19 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, id]
                 ,   (err, rows) =>
-                        if not err and rows.length == 0
-                            throw new @getById.NotFoundError 'account not found'
+                        try
+                            if not err and rows.length == 0
+                                throw new @getById.NotFoundError 'account not found'
 
-                        if err
-                            throw new Error err
+                            if err
+                                throw new Error err
 
-                        account= new @ rows.shift()
-                        dfd.resolve account
+                            account= new @ rows.shift()
+                            dfd.resolve account
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -268,15 +284,19 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, data, id, oldPass, @table, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == 1 and res[1].length == 1
-                            account= new @ res[1][0]
-                            dfd.resolve account
-                        else
-                            throw new Error 'account not updated'
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                account= new @ res[1][0]
+                                dfd.resolve account
+                            else
+                                throw new Error 'account not updated'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -309,16 +329,20 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
-                        if res.length == 0
-                            throw new @delete.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if res.length == 0
+                                throw new @delete.NotFoundError 'not found'
 
-                        if res[0].affectedRows == 1
-                            dfd.resolve true
-                        else
-                            throw new Error 'account not deleted'
+                            if res[0].affectedRows == 1
+                                dfd.resolve true
+                            else
+                                throw new Error 'account not deleted'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -365,19 +389,23 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, enabled, id, @table, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
-                        if res.length == 0
-                            throw new @enable.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if res.length == 0
+                                throw new @enable.NotFoundError 'not found'
 
-                        enabledAt= res[1][0].enabledAt
-                        enabled= !!enabledAt
+                            enabledAt= res[1][0].enabledAt
+                            enabled= !!enabledAt
 
-                        data=
-                            enabledAt: enabledAt
-                            enabled: enabled
-                        dfd.resolve data
+                            data=
+                                enabledAt: enabledAt
+                                enabled: enabled
+                            dfd.resolve data
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -424,19 +452,23 @@ module.exports= (log) -> class Account
                     """
                 ,   [@table, enabled, profileId, @table, profileId]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
-                        if res.length == 0
-                            throw new @enableByProfileId.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if res.length == 0
+                                throw new @enableByProfileId.NotFoundError 'not found'
 
-                        enabledAt= res[1][0].enabledAt
-                        enabled= !!enabledAt
+                            enabledAt= res[1][0].enabledAt
+                            enabled= !!enabledAt
 
-                        data=
-                            enabledAt: enabledAt
-                            enabled: enabled
-                        dfd.resolve data
+                            data=
+                                enabledAt: enabledAt
+                                enabled: enabled
+                            dfd.resolve data
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
