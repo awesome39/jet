@@ -56,15 +56,19 @@ module.exports= (ProfilePermission) -> class Group
                     """
                 ,   [@table, data.name, 'group', data.title, @table]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == 1 and res[1].length == 1
-                            group= new @ res[1][0]
-                            dfd.resolve group
-                        else
-                            throw new Error 'group not created'
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                group= new @ res[1][0]
+                                dfd.resolve group
+                            else
+                                throw new Error 'group not created'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -98,15 +102,19 @@ module.exports= (ProfilePermission) -> class Group
                     """
                 ,   [@table, 'group']
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        groups= []
-                        if rows.length
-                            for row in rows
-                                groups.push new @ row
-                        dfd.resolve groups
+                            groups= []
+                            if rows.length
+                                for row in rows
+                                    groups.push new @ row
+                            dfd.resolve groups
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -141,15 +149,19 @@ module.exports= (ProfilePermission) -> class Group
                     """
                 ,   [@table, id, 'group']
                 ,   (err, rows) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if not err and rows.length == 0
-                            throw new @getById.NotFoundError 'not found'
+                            if not err and rows.length == 0
+                                throw new @getById.NotFoundError 'not found'
 
-                        group= new @ rows.shift()
-                        dfd.resolve group
+                            group= new @ rows.shift()
+                            dfd.resolve group
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -207,15 +219,19 @@ module.exports= (ProfilePermission) -> class Group
                     """
                 ,   [@table, data, id, 'group', @table, id, 'group']
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == 1 and res[1].length == 1
-                            group= new @ res[1][0]
-                            dfd.resolve group
-                        else
-                            throw new Error 'not updated'
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                group= new @ res[1][0]
+                                dfd.resolve group
+                            else
+                                throw new Error 'not updated'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -248,16 +264,20 @@ module.exports= (ProfilePermission) -> class Group
                     """
                 ,   [@table, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
-                        if res.length == 0
-                            throw new @delete.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if res.length == 0
+                                throw new @delete.NotFoundError 'not found'
 
-                        if res[0].affectedRows == 1
-                            dfd.resolve true
-                        else
-                            throw new Error 'not deleted'
+                            if res[0].affectedRows == 1
+                                dfd.resolve true
+                            else
+                                throw new Error 'not deleted'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -304,19 +324,23 @@ module.exports= (ProfilePermission) -> class Group
                     """
                 ,   [@table, enabled, id, @table, id]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
-                        if res.length == 0
-                            throw new @enable.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if res.length == 0
+                                throw new @enable.NotFoundError 'not found'
 
-                        enabledAt= res[1][0].enabledAt
-                        enabled= !!enabledAt
+                            enabledAt= res[1][0].enabledAt
+                            enabled= !!enabledAt
 
-                        data=
-                            enabledAt: enabledAt
-                            enabled: enabled
-                        dfd.resolve data
+                            data=
+                                enabledAt: enabledAt
+                                enabled: enabled
+                            dfd.resolve data
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 

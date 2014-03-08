@@ -69,15 +69,19 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
                     """
                 ,   [@table, profileId, @Permission.table, name, @table]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
+                        try
+                            if err
+                                throw new Error err
 
-                        if res[0].affectedRows == 1 and res[1].length == 1
-                            data= new @ res[1][0]
-                            dfd.resolve data
-                        else
-                            throw new Error 'profile permission not created'
+                            if res[0].affectedRows == 1 and res[1].length == 1
+                                data= new @ res[1][0]
+                                dfd.resolve data
+                            else
+                                throw new Error 'profile permission not created'
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
@@ -120,19 +124,23 @@ module.exports= (Permission, log) -> class ProfilePermission extends Permission
                     """
                 ,   [@table, enabled, profileId, @table, profileId]
                 ,   (err, res) =>
-                        if err
-                            throw new Error err
-                        if res.length == 0
-                            throw new @enableByProfileId.NotFoundError 'not found'
+                        try
+                            if err
+                                throw new Error err
+                            if res.length == 0
+                                throw new @enableByProfileId.NotFoundError 'not found'
 
-                        enabledAt= res[1][0].enabledAt
-                        enabled= !!enabledAt
+                            enabledAt= res[1][0].enabledAt
+                            enabled= !!enabledAt
 
-                        data=
-                            enabledAt: enabledAt
-                            enabled: enabled
-                        dfd.resolve data
+                            data=
+                                enabledAt: enabledAt
+                                enabled: enabled
+                            dfd.resolve data
 
+
+                        catch err
+                            dfd.reject err
             catch err
                 dfd.reject err
 
